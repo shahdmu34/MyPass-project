@@ -16,33 +16,24 @@
         <div class="contianer">
             <form>
                 <div class="conatiner-uth">
-                    <h1>Register Account</h1>
+                    <h1>Login</h1>
 
                     <div class="userInput">
                         <input type="email" id="email" placeholder="Enter Email Address" required>
                     </div>
 
-                    <div class="userInput">
-                        <p>Security Questions</p>
-                        <p>answers need to be at least 6 charcters long.</p>
-                        <input type="text" id="questions-1" placeholder="Favorite Childhood Toy or Game:" required>
-                        <input type="text" id="questions-2" placeholder="Dream Vacation Destination:" required>
-                        <input type="text" id="questions-3" placeholder="First Job or Company:" required>
-
                     
-                    </div>
-
 
                     <div class="userInput">
                         <input type="password" id="password" placeholder="Enter Password" required>
                     </div>
 
                     <div class="user-input">
-                        <button type="button" id="submitBtn" name="submitBtn" class="registeration-btn">Registar Account</button>
+                        <button type="button" id="submitBtn" name="submitBtn" class="registeration-btn">LogIn</button>
                         </div>
 
                     <div class="login-continer">
-                            <p>Already have an account?  <a href="login.html">Log In here!</a></p>
+                            <p>Don't have an account?  <a href="index.html">Registar Here!</a></p>
                     </div>
 
 
@@ -50,18 +41,14 @@
             </form>
         </div>
 
-
-
-
-        
-
     </body>
 
+    
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-        import { getAuth,createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
-        import { getDatabase, set, ref} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+        import { getAuth,createUserWithEmailAndPassword, signInWithEmailAndPassword   } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+        import { getDatabase, set, ref, update} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
         // TODO: Add SDKs for Firebase products that you want to use
         // https://firebase.google.com/docs/web/setup#available-libraries
       
@@ -81,44 +68,41 @@
          const auth = getAuth(app);
         //intilize database
         const database = getDatabase(app);
-
+    
         submitBtn.addEventListener('click', (e) =>{
-
             var email = document.getElementById('email').value;
             var password = document.getElementById('password').value;
-            var toy = document.getElementById('questions-1').value;
-            var vacation = document.getElementById('questions-2').value;
-            var job = document.getElementById('questions-3').value;
-            var password = document.getElementById('password').value;
-            createUserWithEmailAndPassword(auth, email,toy,vacation,job, password)
-                .then((userCredential) => {
-                    // Signed up 
-                    const user = userCredential.user;
 
-                    set(ref(database,'Users/' + user.uid), {
-                        email: email,
-                        question_one: toy,
-                        question_two: vacation,
-                        question_three: job,
-                        password:password
+            signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                // ...
+                var past_login = new Date();
+                update(ref(database,'Users/' + user.uid), {
+                       pastLogin: past_login,
 
                     })
                     .then(() =>{
-                        alert('User created!');
-                        window.location.href = "login.html";
+                        alert('User is logged in!');
+                        window.location.href = "home.html";
                         //user was created
                     })
                     .catch((error) => {
                         alert(errorMessage);
                         //error in creating user
                     });
-                
-                })
-                .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    alert(errorMessage)
-                });
+
             })
-      </script>
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                alert(errorMessage);
+
+            });
+        })
+
+    </script>
+
+
 </html>
