@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <meta charset="UTF-8">
+        <title>Term project registration page</title>
+        <link rel="stylesheet" type="text/css" href="css/index_style.css" />
+    </head>
+    <body>
+
+        <header>
+            <h1 class="title">MyPass</h1>
+
+        </header>
+
+        <div class="contianer">
+            <form>
+                <div class="conatiner-uth">
+                    <h1>Login</h1>
+
+                    <div class="userInput">
+                        <input type="email" id="email" placeholder="Enter Email Address" required>
+                    </div>
+
+                    
+
+                    <div class="userInput">
+                        <input type="password" id="password" placeholder="Enter Password" required>
+                    </div>
+
+                    <div class="user-input">
+                        <button type="button" id="submitBtn" name="submitBtn" class="registeration-btn">LogIn</button>
+                        </div>
+
+                    <div class="login-continer">
+                            <p>Don't have an account?  <a href="index.html">Registar Here!</a></p>
+                    </div>
+
+
+                </div>
+            </form>
+        </div>
+
+    </body>
+
+    
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAuth,createUserWithEmailAndPassword, signInWithEmailAndPassword   } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+        import { getDatabase, set, ref, update} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyAaJ0fhXXd_WEuTwUTQJpa211weqA7ZQ6w",
+          authDomain: "term-project-476.firebaseapp.com",
+          projectId: "term-project-476",
+          storageBucket: "term-project-476.appspot.com",
+          messagingSenderId: "276408407460",
+          appId: "1:276408407460:web:b05ec30e174fb0c3441d31"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+         //initialize user authantication
+         const auth = getAuth(app);
+        //intilize database
+        const database = getDatabase(app);
+    
+        submitBtn.addEventListener('click', (e) =>{
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in 
+                const user = userCredential.user;
+                // ...
+                var past_login = new Date();
+                update(ref(database,'Users/' + user.uid), {
+                       pastLogin: past_login,
+
+                    })
+                    .then(() =>{
+                        alert('User is logged in!');
+                        window.location.href = "home.html";
+                        //user was created
+                    })
+                    .catch((error) => {
+                        alert(errorMessage);
+                        //error in creating user
+                    });
+
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                alert(errorMessage);
+
+            });
+        })
+
+    </script>
+
+
+</html>
