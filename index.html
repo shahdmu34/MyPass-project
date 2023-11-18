@@ -358,7 +358,7 @@
 
     // The strong and weak password Regex pattern checker
     let strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})');
-    let mediumPassword = new RegExp('((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[A-Z])(?=.{8,}))');
+    let mediumPassword = new RegExp('((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]))');
     let okayPassword = new RegExp('((?=.*[a-z])(?=.*[A-Z]))');
 
     function StrengthChecker(PasswordParameter) {
