@@ -1,41 +1,407 @@
-<!doctype html>
-<html class="no-js" lang="">
-
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="utf-8">
-  <title></title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta property="og:title" content="">
-  <meta property="og:type" content="">
-  <meta property="og:url" content="">
-  <meta property="og:image" content="">
-
-  <link rel="manifest" href="site.webmanifest">
-  <link rel="apple-touch-icon" href="icon.png">
-  <!-- Place favicon.ico in the root directory -->
-
-  <link rel="stylesheet" href="css/normalize.css">
-  <link rel="stylesheet" href="css/main.css">
-
-  <meta name="theme-color" content="#fafafa">
+    <meta charset="UTF-8">
+    <title>Term project registration page</title>
+    <link rel="stylesheet" type="text/css" href="css/index_style.css" />
 </head>
-
 <body>
 
-  <!-- Add your site or application content here -->
-  <p>Hello world! This is HTML5 Boilerplate.</p>
-  <script src="js/vendor/modernizr-3.11.2.min.js"></script>
-  <script src="js/plugins.js"></script>
-  <script src="js/main.js"></script>
+<header>
+    <h1 class="title">MyPass</h1>
 
-  <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
-  <script>
-    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
-    ga('create', 'UA-XXXXX-Y', 'auto'); ga('set', 'anonymizeIp', true); ga('set', 'transport', 'beacon'); ga('send', 'pageview')
-  </script>
-  <script src="https://www.google-analytics.com/analytics.js" async></script>
+</header>
+
+<div class="contianer">
+    <form>
+        <div class="conatiner-uth">
+            <h1>Register Account</h1>
+
+            <div class="userInput">
+                <input type="email" id="email" placeholder="Enter Email Address" required>
+            </div>
+
+            <div class="userInput">
+                <p>Security Questions</p>
+                <input type="text" id="questions-1" placeholder="Favorite Childhood Toy or Game:" required>
+                <input type="text" id="questions-2" placeholder="Dream Vacation Destination:" required>
+                <input type="text" id="questions-3" placeholder="First Job or Company:" required>
+            </div>
+
+            <div class="userInput">
+                <input type="text" id="password" placeholder="Enter Password" required>
+                <button type="button" id="generatePasswordBtn">Generate Password</button>
+                <!-- series of checkboxes that will allow the user to generate what type of password they would like to generate -->
+                <input type="checkbox" class="radioCheck" name="difficultyCheck" id="c01" value="Yes" onclick="check(this);" />Easy to Say
+                <input type="checkbox" class="radioCheck" name="difficultyCheck" id="c02" value="No"  onclick= "check(this);" />Easy to Read
+                <input type="checkbox" class="radioCheck" name="difficultyCheck" id="c03" value="No"  onclick= "check(this);" checked="true" />All Characters
+                <input type="range" min="1" max="50" value="10" class="slider" id="myRange">
+                Value: <span id="demo"></span>
+
+                <!-- function to ensure that only one checkbox is checked at a time -->
+                <script>
+                    function check(input)
+                    {
+
+                        var checkboxes = document.getElementsByClassName("radioCheck");
+
+                        for(var i = 0; i < checkboxes.length; i++)
+                        {
+                            //uncheck all
+                            if(checkboxes[i].checked == true)
+                            {
+                                checkboxes[i].checked = false;
+                            }
+                        }
+
+                        //set checked of clicked object
+                        if(input.checked == true)
+                        {
+                            input.checked = false;
+                        }
+                        else
+                        {
+                            input.checked = true;
+                        }
+                    }
+
+                    var slider = document.getElementById("myRange");
+                    var output = document.getElementById("demo");
+                    output.innerHTML = slider.value; // Display the default slider value
+
+                    // Update the current slider value (each time you drag the slider handle)
+                    slider.oninput = function() {
+                        output.innerHTML = this.value;
+                    }
+                </script>
+
+                <span id="StrengthDisp" class="badge displayBadge"></span>
+            </div>
+
+            <div class="user-input">
+                <button type="button" id="submitBtn" name="submitBtn" class="registeration-btn">Register Account</button>
+            </div>
+
+            <div class="login-continer">
+                <p>Already have an account?  <a href="login.html">Log In here!</a></p>
+            </div>
+
+
+        </div>
+    </form>
+</div>
+
 </body>
 
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+    import { getAuth,createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+    import { getDatabase, set, ref} from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAaJ0fhXXd_WEuTwUTQJpa211weqA7ZQ6w",
+        authDomain: "term-project-476.firebaseapp.com",
+        projectId: "term-project-476",
+        storageBucket: "term-project-476.appspot.com",
+        messagingSenderId: "276408407460",
+        appId: "1:276408407460:web:b05ec30e174fb0c3441d31"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    //initialize user authantication
+    const auth = getAuth(app);
+    //intilize database
+    const database = getDatabase(app);
+
+    //-------------Password Generator Segment-------------
+    //Builder
+    class PasswordBuilder {
+        setLength(length) {
+
+        }
+
+        includeUppercase() {
+
+        }
+
+        includeLowercase() {
+
+        }
+
+        includeNumbers() {
+
+        }
+
+        includeSpecialCharacters() {
+
+        }
+
+        GetResult() {}
+
+    }
+
+    //Concrete Builders
+    //Easy only incorporates uppercase and lower case letters
+    class Easy extends PasswordBuilder {
+        password = new Password;
+
+        setLength(length) {
+            this.password.length = length;
+        }
+
+        includeUppercase() {
+            this.password.includeUppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        }
+
+        includeLowercase() {
+            this.password.includeLowercase = "abcdefghijklmnopqrstuvwxyz";
+        }
+
+        includeNumbers() {
+            this.password.includeNumbers = "";
+        }
+
+        includeSpecialCharacters() {
+            this.password.includeSpecialCharacters = "";
+        }
+
+        GetResult() {
+            return this.password;
+        }
+    }
+
+    //Medium includes uppercase and lower case letters with numbers
+    class Medium extends PasswordBuilder {
+        password = new Password;
+
+        setLength(length) {
+            this.password.length = length;
+        }
+
+        includeUppercase() {
+            this.password.includeUppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        }
+
+        includeLowercase() {
+            this.password.includeLowercase = "abcdefghijklmnopqrstuvwxyz";
+        }
+
+        includeNumbers() {
+            this.password.includeNumbers = "0123456789";
+        }
+
+        includeSpecialCharacters() {
+            this.password.includeSpecialCharacters = "";
+        }
+
+        GetResult() {
+            return this.password;
+        }
+    }
+
+    //Hard includes upper and lower case letters, numbers, and special characters
+    class Hard extends PasswordBuilder {
+        password = new Password;
+
+        setLength(length) {
+            this.password.length = length;
+        }
+
+        includeUppercase() {
+            this.password.includeUppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        }
+
+        includeLowercase() {
+            this.password.includeLowercase = "abcdefghijklmnopqrstuvwxyz";
+        }
+
+        includeNumbers() {
+            this.password.includeNumbers = "0123456789";
+        }
+
+        includeSpecialCharacters() {
+            this.password.includeSpecialCharacters = "!@#$%^&*()-_+=<>?";
+        }
+
+        GetResult() {
+            return this.password;
+        }
+    }
+
+    // Product
+    class Password {
+        length;
+        includeUppercase;
+        includeLowercase;
+        includeNumbers;
+        includeSpecialCharacters;
+
+        show() {
+            let password = "";
+            let charset = this.includeUppercase + this.includeLowercase + this.includeNumbers + this.includeSpecialCharacters;
+
+            for (let i = 0; i < this.length; i++) {
+                const randomIndex = Math.floor(Math.random() * charset.length);
+                password += charset.charAt(randomIndex);
+            }
+
+            return password;
+        }
+    }
+
+    //Director
+    class PasswordGenerator {
+        generate(passwordInstance, length) {
+            let pass = new Hard();
+            pass = passwordInstance;
+            pass.setLength(length);
+            pass.includeUppercase();
+            pass.includeLowercase();
+            pass.includeNumbers();
+            pass.includeSpecialCharacters();
+        }
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    const generatePasswordBtn = document.getElementById('generatePasswordBtn');
+    const passwordInput = document.getElementById('password');
+
+    generatePasswordBtn.addEventListener('click', () => {
+        // Create PasswordGenerator and Password Builders that is dependent on difficulty
+        let generator = new PasswordGenerator();
+        let pass = new Hard();
+        let length = document.getElementById('demo').innerHTML;
+
+        if (document.getElementById('c01').checked) {
+            pass = new Easy();
+        }
+        else if (document.getElementById('c02').checked) {
+            pass = new Medium();
+        }
+        else if (document.getElementById('c03').checked) {
+            pass = new Hard();
+        }
+
+        console.log(length);
+
+        generator.generate(pass, length);
+        let passwordComplete = pass.GetResult();
+
+        passwordInput.value = passwordComplete.show();
+
+        //The badge is hidden by default, so we show it
+
+        strengthBadge.style.display= 'block';
+        clearTimeout(timeout);
+
+        //We then call the StrengChecker function as a callback then pass the typed password to it
+
+        timeout = setTimeout(() => StrengthChecker(password.value), 500);
+
+        //In case a user clears the text, the badge is hidden again
+
+        if(password.value.length !== 0){
+            strengthBadge.style.display != 'block';
+        } else{
+            strengthBadge.style.display = 'none';
+        }
+    });
+
+    submitBtn.addEventListener('click', (e) =>{
+
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed up
+                const user = userCredential.user;
+
+                set(ref(database,'Users/' + user.uid), {
+                    email: email,
+                    password:password
+
+                })
+                    .then(() =>{
+                        alert('User created!');
+                        window.location.href = "login.html";
+                        //user was created
+                    })
+                    .catch((error) => {
+                        alert(errorMessage);
+                        //error in creating user
+                    });
+
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                alert(errorMessage)
+            });
+    })
+
+    //------------------------Password Strength Checker--------------------------------------------------
+
+    // timeout before a callback is called
+
+    let timeout;
+
+    // traversing the DOM and getting the input and span using their IDs
+
+    let password = document.getElementById('password');
+    let strengthBadge = document.getElementById('StrengthDisp');
+
+    // The strong and weak password Regex pattern checker
+    let strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})');
+    let mediumPassword = new RegExp('((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[A-Z])(?=.{8,}))');
+    let okayPassword = new RegExp('((?=.*[a-z])(?=.*[A-Z]))');
+
+    function StrengthChecker(PasswordParameter) {
+        // We then change the badge's color and text based on the password strength
+
+        if(strongPassword.test(PasswordParameter)) {
+            strengthBadge.style.backgroundColor = "green";
+            strengthBadge.textContent = 'Strong';
+        } else if(mediumPassword.test(PasswordParameter)){
+            strengthBadge.style.backgroundColor = 'blue';
+            strengthBadge.textContent = 'Medium';
+        } else if(okayPassword.test(PasswordParameter)) {
+            strengthBadge.style.backgroundColor = 'yellow';
+            strengthBadge.textContent = 'Acceptable';
+        } else {
+            strengthBadge.style.backgroundColor = 'red';
+            strengthBadge.textContent = 'Weak';
+        }
+    }
+
+    // Adding an input event listener when a user types to the  password input
+
+    password.addEventListener("input", () => {
+
+        //The badge is hidden by default, so we show it
+
+        strengthBadge.style.display= 'block';
+        clearTimeout(timeout);
+
+        //We then call the StrengChecker function as a callback then pass the typed password to it
+
+        timeout = setTimeout(() => StrengthChecker(password.value), 500);
+
+        //In case a user clears the text, the badge is hidden again
+
+        if(password.value.length !== 0){
+            strengthBadge.style.display != 'block';
+        } else{
+            strengthBadge.style.display = 'none';
+        }
+    });
+
+
+
+</script>
 </html>
