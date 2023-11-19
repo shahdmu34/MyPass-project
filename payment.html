@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<head>
+    
+    <meta charset="UTF-8">
+    <title>MyPass</title>
+    <link rel="stylesheet" type="text/css" href="css/home_style.css" />
+</head>
+<body>
+    <div class="container-app">
+        <aside class="sideNav">
+            <h3>MyPass</h3>
+
+            <nav class="menuBar">
+
+                <a href="home.html" class="menu  ">Edit Profile</a>
+                <a href="payment.html" class="menu is-active">Payment Information</a>
+                <a href="identity.html" class="menu">Identity</a>
+                <a href="#" class="menu">Secure notes</a>
+                <a href="login.html" class="menu">Sign Out</a>
+
+
+            </nav>
+        </aside>
+
+        <main class="content">
+            <h1>Payment information</h1>
+            <!--credit card information-->
+            <form class="edit-profile-form">
+                <div class="form-group">
+                    <label for="creditCard">Credit Card Number</label>
+                    <input type="text" id="creditCard" name="creditCard" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="CVV">CVV</label>
+                    <input type="text" id="CVV" name="CVV" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="Experation">Experation Date</label>
+                    <input type="text" id="Experation" name="Experation" required>
+                </div>
+                
+              
+                <button type="submit">Save Information</button>
+            </form>
+        </main>
+
+  
+    
+    
+    </div>
+    
+
+
+
+</body>
+
+</html>
