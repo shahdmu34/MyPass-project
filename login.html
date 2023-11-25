@@ -83,7 +83,7 @@
             var username = document.getElementById('username').value;
             var master_password = document.getElementById('password').value;
 
-            signInWithEmailAndPassword(auth, email, username)
+            signInWithEmailAndPassword(auth, email, master_password)
             .then((userCredential) => {
                 const user = userCredential.user;
                 var past_login = new Date();

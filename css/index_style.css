@@ -1,0 +1,63 @@
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0; /* Set your desired background color */
+}
+
+.container {
+    background-color: #fff; /* Set your desired container background color */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 300px;
+}
+
+.header {
+    text-align: left; /* Align header text to the left */
+    margin-bottom: 20px; /* Add margin to the bottom of the header */
+}
+
+.title {
+    margin: 0; /* Remove default margin for the title */
+}
+
+.userInput {
+    margin-bottom: 15px;
+}
+
+/* Style input fields */
+.userInput input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px; /* Set border-radius for rounded corners */
+    box-sizing: border-box;
+}
+
+.user-input button {
+    width: 100%;
+    padding: 10px;
+    background-color: #455945; /* Set your desired button color */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.login-container {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.login-container a {
+    text-decoration: none;
+    color: #007bff; /* Set your desired link color */
+}
+
+.login-container p {
+    margin: 0;
+}
+

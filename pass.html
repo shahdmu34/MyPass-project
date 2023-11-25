@@ -9,15 +9,13 @@
     <body>
 
         
-        <header>
-            <h1 class="title">MyPass</h1>
-
-        </header>
+      
 
         <div class="contianer">
             <form>
                 <div class="conatiner-uth">
-                    <h1>Recover Password</h1>
+                    <h1 class="title">MyPass</h1>
+                    <h2>Recover Password</h2>
 
 
                     <div class="userInput">
@@ -31,9 +29,7 @@
                     <div class="userInput">
                         <p>Security Questions</p>
                         <input type="text" id="questions-1" placeholder="Favorite Childhood Toy or Game:" required>
-                        <br>
                         <input type="text" id="questions-2" placeholder="Dream Vacation Destination:" required>
-                        <br>
                         <input type="text" id="questions-3" placeholder="First Job or Company:" required>
                     </div>
                  
@@ -85,6 +81,120 @@
         //intilize database
         const database = getDatabase(app); 
 
+
+        //chain of reposability pattern for secuirty questions
+        class SecurityQuestionChain {
+            setNextHandler(handler) {
+                this.nextHandler = handler;
+        }
+
+        chainRequest(question, answer) {
+            if (this.nextHandler) {
+                this.nextHandler.handleRequest(question, answer);
+            } else {
+                // This is the end of the chain, handle it appropriately (e.g., show an error message)
+            }
+        }
+    }
+
+    // Question one
+    class FavToyQuestion extends SecurityQuestionChain {
+        handleRequest(question, answer) {
+            if (question === "Favorite Childhood Toy or Game" && answer === "valid_answer_1") {
+                // Handle the validation (e.g., show a success message)
+                alert("Security question 1 is valid!");
+            } else {
+                // Pass the request to the next handler in the chain
+                this.chainRequest(question, answer);
+            }
+        }
+    }
+
+    // Question two
+    class VacationDestinationQuestion extends SecurityQuestionChain {
+        handleRequest(question, answer) {
+            if (question === "Dream Vacation Destination" && answer === "valid_answer_2") {
+                alert("Security question 2 is valid!");
+            } else {
+                this.chainRequest(question, answer);
+            }
+        }
+    }
+
+    // Question three
+    class FirstJobQuestion extends SecurityQuestionChain {
+        handleRequest(question, answer) {
+            if (question === "First Job or Company" && answer === "valid_answer_3") {
+                alert("Security question 3 is valid!");
+            } else {
+                this.chainRequest(question, answer);
+            }
+        }
+    }
+
+    // Main function - handles switching questions
+    function recoverPassword(email, answer1, answer2, answer3) {
+    // Create and link the chain of responsibility
+    const favoriteToyQuestion = new FavToyQuestion();
+    const vacationDestinationQuestion = new VacationDestinationQuestion();
+    const firstJobQuestion = new FirstJobQuestion();
+
+    favoriteToyQuestion.setNextHandler(vacationDestinationQuestion);
+    vacationDestinationQuestion.setNextHandler(firstJobQuestion);
+
+    // Trigger the chain with the first question
+    favoriteToyQuestion.handleRequest("Favorite Childhood Toy or Game", answer1);
+}
+
+// ...
+
+submitBtn.addEventListener('click', (e) => {
+    var email = document.getElementById('email').value;
+    var username = document.getElementById('username').value;
+
+    signInWithEmailAndPassword(auth, email, username)
+    .then((userCredential) => {
+        const user = userCredential.user;
+        const userRef = ref(database, 'Users/' + user.uid);
+
+
+        // Retrieve answers from the user input
+        const answer1 = document.getElementById("questions-1").value;
+        const answer2 = document.getElementById("questions-2").value;
+        const answer3 = document.getElementById("questions-3").value;
+
+        // Call the password recovery function
+        recoverPassword(email, answer1, answer2, answer3);
+
+        
+        get(userRef).then((snapshot) => {
+            const userData = snapshot.val();
+
+            // Assuming you have a field named 'master_password' in your database
+            const masterPassword = userData.master_password;
+
+            update(userRef, {})
+            .then(() =>{
+                alert('User Master Password: ' + masterPassword);
+                window.location.href = "login.html";
+            })
+            .catch((error) => {
+                alert('Error updating user: ' + error.message);
+            });
+        })
+
+    })
+    .catch((error) => {
+        const errorMessage = error.message;
+        alert(errorMessage);
+    });
+});
+
+
+
+        //------------------------------------------------------------------------------------------------------------------
+        //submit button listener that handles recovering the password upon click
+        /*
         submitBtn.addEventListener('click', (e) => {
     var email = document.getElementById('email').value;
     var username = document.getElementById('username').value;
@@ -120,82 +230,8 @@
     });
 });
 
+*/
 
-
-
-
-  //need to link firebase and compare answers with user database!
-        //chain of responsibility pattern
-        //chain 
-        /*
-        class SecurityQuestionChain{
-            setNextChain(chain){
-                this.nextChain = chain;
-            }
-
-            chainRequest(question, answer){
-
-            }
-
-        }
-
-        //question one
-        class FavToyQuestion extends SecurityQuestionChain{
-            handleRequest(question, answer) {
-            if (question === "Favorite Childhood Toy or Game" && answer === "valid_answer_1") {
-                // Handle the validation (e.g., show a success message)
-                alert("Security question 1 is valid!");
-            } else if (this.nextChain) {
-                // Pass the request to the next handler in the chain
-                this.nextChain.handleRequest(question, answer);
-            }
-        }
-        }
-
-        //question two
-        class VacationDestinationQuestion extends SecurityQuestionChain {
-        handleRequest(question, answer) {
-            if (question === "Dream Vacation Destination" && answer === "valid_answer_2") {
-                alert("Security question 2 is valid!");
-            } else if (this.nextChain) {
-                this.nextChain.handleRequest(question, answer);
-            }
-        }
-    }
-    //question three
-    class FirstJobQuestion extends SecurityQuestionChain {
-        handleRequest(question, answer) {
-            if (question === "First Job or Company" && answer === "valid_answer_3") {
-                alert("Security question 3 is valid!");
-            } else if (this.nextChain) {
-                this.nextChain.handleRequest(question, answer);
-            }
-        }
-    }
-
-
-    //chain main function - handles switching questions
-
-    function recoverPassword(){
-        //user input
-
-        const email = document.getElementById("email").value;
-        const answer1 = document.getElementById("questions-1").value;
-        const answer2 = document.getElementById("questions-2").value;
-        const answer3 = document.getElementById("questions-3").value;
-
-        // Create and link the chain of responsibility
-        const favoriteToyQuestion = new FavToyQuestion();
-        const vacationDestinationQuestion = new VacationDestinationQuestion();
-        const firstJobQuestion = new FirstJobQuestion();
-
-        favoriteToyQuestion.setNextHandler(vacationDestinationQuestion);
-        vacationDestinationQuestion.setNextHandler(firstJobQuestion);
-
-        // Trigger the chain
-        favoriteToyHandler.handleRequest("Favorite Childhood Toy or Game", answer1);
-    }
-    */
 
     </script>
     
