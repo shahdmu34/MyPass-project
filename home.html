@@ -1,6 +1,6 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
-    
     <meta charset="UTF-8">
     <title>MyPass</title>
     <link rel="stylesheet" type="text/css" href="css/home_style.css" />
@@ -9,23 +9,18 @@
     <div class="container-app">
         <aside class="sideNav">
             <h3>MyPass</h3>
-
             <nav class="menuBar">
-
-                <a href="home.html" class="menu is-active ">Edit Profile</a>
+                <a href="home.html" class="menu is-active">Edit Profile</a>
                 <a href="payment.html" class="menu">Payment Information</a>
                 <a href="identity.html" class="menu">Identity</a>
                 <a href="secure.html" class="menu">Secure notes</a>
                 <a href="login.html" class="menu">Sign Out</a>
-
-
-
             </nav>
         </aside>
 
         <main class="content">
             <h1>Edit Profile</h1>
-            <!--username,password, account info edit - center-->
+            <!--username, password, account info edit - center-->
             <form class="edit-profile-form">
                 <div class="form-group">
                     <label for="username">Username:</label>
@@ -55,15 +50,43 @@
                 <button type="submit">Save Information</button>
             </form>
         </main>
-
-  
-    
-    
     </div>
-    
 
-
-
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+        import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+  
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "your-api-key",
+            authDomain: "your-auth-domain",
+            projectId: "your-project-id",
+            storageBucket: "your-storage-bucket",
+            messagingSenderId: "your-messaging-sender-id",
+            appId: "your-app-id"
+        };
+  
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        // Initialize user authentication
+        const auth = getAuth(app);
+        // Initialize database
+        const database = getDatabase(app);
+  
+        function Check() { 
+            firebase.auth().onAuthStateChanged((user) => { 
+                if (user) { 
+                    // User Signed In 
+                    console.log("User Signed In!!");
+                } else { 
+                    // User is signed out 
+                    console.log("User Signed out!!");
+                    // ... 
+                } 
+            }); 
+        }
+    </script>
 </body>
-
 </html>

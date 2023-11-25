@@ -18,11 +18,15 @@
                 <div class="conatiner-uth">
                     <h1>Login</h1>
 
+
+                    <div class="userInput">
+                        <input type="text" id="username" placeholder="Enter username" required>
+                    </div>
+
                     <div class="userInput">
                         <input type="email" id="email" placeholder="Enter Email Address" required>
                     </div>
-
-                    
+                 
 
                     <div class="userInput">
                         <input type="password" id="password" placeholder="Enter Password" required>
@@ -72,40 +76,36 @@
          //initialize user authantication
          const auth = getAuth(app);
         //intilize database
-        const database = getDatabase(app);
-    
-        submitBtn.addEventListener('click', (e) =>{
+        const database = getDatabase(app); 
+
+        submitBtn.addEventListener('click', (e) => {
             var email = document.getElementById('email').value;
-            var password = document.getElementById('password').value;
+            var username = document.getElementById('username').value;
+            var master_password = document.getElementById('password').value;
 
-            signInWithEmailAndPassword(auth, email, password)
+            signInWithEmailAndPassword(auth, email, username)
             .then((userCredential) => {
-                // Signed in 
                 const user = userCredential.user;
-                // ...
                 var past_login = new Date();
-                update(ref(database,'Users/' + user.uid), {
-                       pastLogin: past_login,
 
-                    })
-                    .then(() =>{
-                        alert('User is logged in!');
-                        window.location.href = "home.html";
-                        //user was created
-                    })
-                    .catch((error) => {
-                        alert(errorMessage);
-                        //error in creating user
-                    });
+                update(ref(database,'Users/' + user.uid), {
+                    pastLogin: past_login,
+                })
+                .then(() =>{
+                    alert('User ' + email + ' is logged in! + ' + master_password);
+                    window.location.href = "home.html";
+                })
+                .catch((error) => {
+                    alert('Error updating user: ' + error.message);
+                });
 
             })
             .catch((error) => {
-                const errorCode = error.code;
                 const errorMessage = error.message;
                 alert(errorMessage);
-
             });
-        })
+        });
+
 
     </script>
 
