@@ -107,7 +107,8 @@ class FavToyQuestion extends SecurityQuestionChain {
             const storedAnswer = userData.question_one.trim();
             return inputAnswer.trim() === storedAnswer;
         } else {
-            return false; // Error in question
+            //this.chainRequest(question, inputAnswer, userData);
+             return false; 
         }
     }
 }
@@ -120,7 +121,8 @@ class VacationDestinationQuestion extends SecurityQuestionChain {
             return inputAnswer.trim() === storedAnswer;
 
         } else {
-            return false; // Error in question
+            //this.chainRequest(question, inputAnswer, userData);v
+             return false; 
         }
     }
 }
@@ -133,6 +135,7 @@ class FirstJobQuestion extends SecurityQuestionChain {
             return inputAnswer.trim() === storedAnswer;
         } else {
             return false; // Error in question
+            //this.chainRequest(question, inputAnswer, userData);
         }
     }
 }

@@ -74,33 +74,56 @@
         //intilize database
         const database = getDatabase(app); 
 
-        submitBtn.addEventListener('click', (e) => {
-            var email = document.getElementById('email').value;
-            var username = document.getElementById('username').value;
-            var master_password = document.getElementById('password').value;
 
-            signInWithEmailAndPassword(auth, email, username)
+
+        //------------Singleton Pattern ---------------------------------------
+        class LoginAuthPattern {
+            constructor() {
+                if (LoginAuthPattern.instance) {
+                return LoginAuthPattern.instance;
+                }
+
+                this.auth = getAuth(app);
+                this.database = getDatabase(app);
+
+                LoginAuthPattern.instance = this;
+        }
+
+        signInWithEmailAndPassword(email, username) {
+            return signInWithEmailAndPassword(this.auth, email, username)
             .then((userCredential) => {
                 const user = userCredential.user;
-                var past_login = new Date();
+                const past_login = new Date();
 
-                update(ref(database,'Users/' + user.uid), {
-                    pastLogin: past_login,
+                update(ref(this.database, 'Users/' + user.uid), {
+                pastLogin: past_login,
                 })
-                .then(() =>{
-                    alert('User ' + email + ' is logged in! + ' );
+                .then(() => {
+                    alert('User ' + email + ' is logged in!');
                     window.location.href = "home.html";
                 })
                 .catch((error) => {
                     alert('Error updating user: ' + error.message);
                 });
-
             })
             .catch((error) => {
                 const errorMessage = error.message;
                 alert(errorMessage);
             });
+        }
+        }
+
+        // Usage
+        const LoginAuthInstance= new LoginAuthPattern();
+
+        submitBtn.addEventListener('click', (e) => {
+        const email = document.getElementById('email').value;
+        const username = document.getElementById('username').value;
+
+        LoginAuthInstance.signInWithEmailAndPassword(email, username);
         });
+
+    
 
 
     </script>

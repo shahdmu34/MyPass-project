@@ -22,6 +22,7 @@ body {
 
 .title {
     margin: 0; /* Remove default margin for the title */
+    padding-top: 70px;
 }
 
 .userInput {
