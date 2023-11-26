@@ -23,31 +23,42 @@
             <!--username, password, account info edit - center-->
             <form class="edit-profile-form">
                 <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required>
+                  <label for="username">Username:</label>
+                  <input type="password" id="username" name="username" required>
                 </div>
-                
+
                 <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+                  <label for="password">Password:</label>
+                  <input type="password" id="password" name="password" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="security-question1">Security Question 1:</label>
                     <input type="text" id="security-question1" name="security-question1" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="security-question2">Security Question 2:</label>
                     <input type="text" id="security-question2" name="security-question2" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="security-question3">Security Question 3:</label>
                     <input type="text" id="security-question3" name="security-question3" required>
                 </div>
-                
-                <button type="submit">Save Information</button>
+
+                <div>
+                    <button id="toggleSensitiveInfo" type="button">Unmask Sensitive Information</button>
+                </div>
+
+                <div>
+                    <button type="submit">Save Information</button>
+                </div>
+
+              <script>
+
+
+              </script>
             </form>
         </main>
     </div>
@@ -55,38 +66,107 @@
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
-        import { getDatabase, set, ref, update } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
-  
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+        import { getDatabase, set, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+
         // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "your-api-key",
-            authDomain: "your-auth-domain",
-            projectId: "your-project-id",
-            storageBucket: "your-storage-bucket",
-            messagingSenderId: "your-messaging-sender-id",
-            appId: "your-app-id"
+            apiKey: "AIzaSyAaJ0fhXXd_WEuTwUTQJpa211weqA7ZQ6w",
+            authDomain: "term-project-476.firebaseapp.com",
+            projectId: "term-project-476",
+            storageBucket: "term-project-476.appspot.com",
+            messagingSenderId: "276408407460",
+            appId: "1:276408407460:web:b05ec30e174fb0c3441d31"
         };
-  
+
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         // Initialize user authentication
         const auth = getAuth(app);
         // Initialize database
         const database = getDatabase(app);
-  
-        function Check() { 
-            firebase.auth().onAuthStateChanged((user) => { 
-                if (user) { 
-                    // User Signed In 
-                    console.log("User Signed In!!");
-                } else { 
-                    // User is signed out 
-                    console.log("User Signed out!!");
-                    // ... 
-                } 
-            }); 
-        }
+
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in.
+                const user = auth.currentUser;
+
+                if (user) {
+                  // The user object has basic properties such as display name, email, etc.
+
+                  // Inside onAuthStateChanged function
+                  const userRef = ref(database, 'Users/' + user.uid);
+
+                  onValue(userRef, (snapshot) => {
+                    const userData = snapshot.val();
+                    if (userData) {
+                      document.getElementById('username').value = userData.username || ''; // Set username
+                      document.getElementById('password').value = userData.master_password || ''; // Set password
+                      document.getElementById('security-question1').value = userData.question_one || ''; // Set security question 1
+                      document.getElementById('security-question2').value = userData.question_two || ''; // Set security question 2
+                      document.getElementById('security-question3').value = userData.question_three || ''; // Set security question 3
+                    }
+                  });
+
+                    // Select the form element
+                    const editProfileForm = document.querySelector('.edit-profile-form');
+
+                    // Add event listener for form submission
+                    editProfileForm.addEventListener('submit', (e) => {
+                        e.preventDefault(); // Prevent the default form submission behavior
+
+                        const updatedUsername = document.getElementById('username').value;
+                        const updatedPassword = document.getElementById('password').value;
+                        const updatedQuestion1 = document.getElementById('security-question1').value;
+                        const updatedQuestion2 = document.getElementById('security-question2').value;
+                        const updatedQuestion3 = document.getElementById('security-question3').value;
+
+                        // Update user data in the database
+                        update(userRef, {
+                            username: updatedUsername,
+                            master_password: updatedPassword,
+                            question_one: updatedQuestion1,
+                            question_two: updatedQuestion2,
+                            question_three: updatedQuestion3,
+                            // ... update other user properties in the database
+                        }).then(() => {
+                            alert('User information updated successfully.');
+                            // Optionally, you can display a success message or perform other actions upon successful update
+                        }).catch((error) => {
+                            console.error('Error updating user information:', error);
+                            // Handle errors or display an error message to the user
+                        });
+                    });
+                }
+              } else {
+                // No user is signed in.
+                console.error("User log in error.")
+              }
+        });
+
+
+        const usernameField = document.getElementById('username');
+        const passwordField = document.getElementById('password');
+        const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
+
+        let isSensitiveInfoVisible = false;
+
+        toggleSensitiveInfoButton.addEventListener('click', function() {
+            isSensitiveInfoVisible = !isSensitiveInfoVisible;
+
+            if (isSensitiveInfoVisible) {
+              usernameField.setAttribute('type', 'text');
+              passwordField.setAttribute('type', 'text');
+              toggleSensitiveInfoButton.textContent = 'Mask Sensitive Information';
+            } else {
+              usernameField.setAttribute('type', 'password');
+              passwordField.setAttribute('type', 'password');
+              toggleSensitiveInfoButton.textContent = 'Unmask Sensitive Information';
+            }
+        });
     </script>
+
+
 </body>
 </html>

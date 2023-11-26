@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-    
+
     <meta charset="UTF-8">
     <title>MyPass</title>
     <link rel="stylesheet" type="text/css" href="css/home_style.css" />
@@ -18,8 +18,6 @@
                 <a href="secure.html" class="menu">Secure notes</a>
                 <a href="login.html" class="menu">Sign Out</a>
 
-
-
             </nav>
         </aside>
 
@@ -31,29 +29,101 @@
                     <label for="fname">First name</label>
                     <input type="text" id="fname" name="fname" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="lname">Last Name</label>
                     <input type="text" id="lname" name="lname" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" required>
                 </div>
-               
-                
+
                 <button type="submit">Save Information</button>
             </form>
         </main>
 
-  
-    
-    
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+        import { getDatabase, set, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAaJ0fhXXd_WEuTwUTQJpa211weqA7ZQ6w",
+            authDomain: "term-project-476.firebaseapp.com",
+            projectId: "term-project-476",
+            storageBucket: "term-project-476.appspot.com",
+            messagingSenderId: "276408407460",
+            appId: "1:276408407460:web:b05ec30e174fb0c3441d31"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        // Initialize user authentication
+        const auth = getAuth(app);
+        // Initialize database
+        const database = getDatabase(app);
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in.
+                const user = auth.currentUser;
+
+                if (user) {
+                    // The user object has basic properties such as display name, email, etc.
+
+                    // Inside onAuthStateChanged function
+                    const userRef = ref(database, 'Users/' + user.uid);
+
+                    onValue(userRef, (snapshot) => {
+                        const userData = snapshot.val();
+                        if (userData) {
+                            document.getElementById('email').value = userData.email || ''; // Set username
+                            document.getElementById('fname').value = userData.firstName || ''; // Set password
+                            document.getElementById('lname').value = userData.lastName || ''; // Set security question 1
+                        }
+                    });
+
+                    // Select the form element
+                    const editProfileForm = document.querySelector('.edit-profile-form');
+
+                    // Event listener to edit/upload first name, last name, and email to the database
+                    editProfileForm.addEventListener('submit', function(e) {
+                        e.preventDefault(); // Prevent form submission
+
+                        // Retrieve values from the form
+                        const fname = document.getElementById('fname').value;
+                        const lname = document.getElementById('lname').value;
+                        const email = document.getElementById('email').value;
+
+                        // Assuming you have a 'users' node to store user information
+                        const userId = 'unique_user_id'; // Replace with your user ID or dynamically get the user ID
+
+                        // Create or update the user's information in the database
+                        update(userRef, {
+                            firstName: fname,
+                            lastName: lname,
+                            email: email
+                            // Add more fields as needed
+                        }).then(() => {
+                            alert('User information updated successfully!');
+                        }).catch((error) => {
+                            console.error('Error saving/updating user information:', error);
+                        });
+                    });
+                }
+            } else {
+                // No user is signed in.
+                console.log("User log in error.")
+            }
+        });
+    </script>
+
+
     </div>
-    
-
-
 
 </body>
 

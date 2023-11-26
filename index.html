@@ -8,13 +8,15 @@
 </head>
 <body>
 
-<
+<header>
+    <h1 class="title">MyPass</h1>
+
+</header>
 
 <div class="contianer">
     <form>
         <div class="conatiner-uth">
-            <h1 class="title">MyPass</h1>
-            <h2>Register Account</h2>
+            <h1>Register Account</h1>
 
             <div class="userInput">
                 <input type="text" id="username" placeholder="Enter username" required>
@@ -32,14 +34,14 @@
             </div>
 
             <div class="userInput">
-                <input type="text" id="password" placeholder="Enter Password" required><br>
-                <button type="button" id="generatePasswordBtn" class="passBtn">Generate Password</button> <br>
+                <input type="text" id="password" placeholder="Enter Password" required>
+                <button type="button" id="generatePasswordBtn">Generate Password</button>
                 <!-- series of checkboxes that will allow the user to generate what type of password they would like to generate -->
                 <input type="checkbox" class="radioCheck" name="difficultyCheck" id="c01" value="Yes" onclick="check(this);" />Easy to Say
                 <input type="checkbox" class="radioCheck" name="difficultyCheck" id="c02" value="No"  onclick= "check(this);" />Easy to Read
                 <input type="checkbox" class="radioCheck" name="difficultyCheck" id="c03" value="No"  onclick= "check(this);" checked="true" />All Characters
                 <input type="range" min="1" max="50" value="10" class="slider" id="myRange">
-                Value: <span id="demo"></span>
+                Length: <span id="demo"></span>
 
                 <!-- function to ensure that only one checkbox is checked at a time -->
                 <script>
@@ -339,7 +341,6 @@
                     question_two: question2,
                     question_three: question3,
 
-
                 })
                     .then(() =>{
                         alert('User created!');
@@ -374,6 +375,7 @@
     let strongPassword = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})');
     let mediumPassword = new RegExp('((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]))');
     let okayPassword = new RegExp('((?=.*[a-z])(?=.*[A-Z]))');
+
 
     function StrengthChecker(PasswordParameter) {
         // We then change the badge's color and text based on the password strength
