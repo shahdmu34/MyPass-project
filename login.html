@@ -8,15 +8,11 @@
     </head>
     <body>
 
-        <header>
-            <h1 class="title">MyPass</h1>
-
-        </header>
-
         <div class="contianer">
             <form>
                 <div class="conatiner-uth">
-                    <h1>Login</h1>
+                    <h1 class="title">MyPass</h1>
+                    <h2>Login</h2>
 
 
                     <div class="userInput">
@@ -83,7 +79,7 @@
             var username = document.getElementById('username').value;
             var master_password = document.getElementById('password').value;
 
-            signInWithEmailAndPassword(auth, email, master_password)
+            signInWithEmailAndPassword(auth, email, username)
             .then((userCredential) => {
                 const user = userCredential.user;
                 var past_login = new Date();
@@ -92,7 +88,7 @@
                     pastLogin: past_login,
                 })
                 .then(() =>{
-                    alert('User ' + email + ' is logged in! + ' + master_password);
+                    alert('User ' + email + ' is logged in! + ' );
                     window.location.href = "home.html";
                 })
                 .catch((error) => {

@@ -8,15 +8,13 @@
 </head>
 <body>
 
-<header>
-    <h1 class="title">MyPass</h1>
-
-</header>
+<
 
 <div class="contianer">
     <form>
         <div class="conatiner-uth">
-            <h1>Register Account</h1>
+            <h1 class="title">MyPass</h1>
+            <h2>Register Account</h2>
 
             <div class="userInput">
                 <input type="text" id="username" placeholder="Enter username" required>
@@ -34,8 +32,8 @@
             </div>
 
             <div class="userInput">
-                <input type="text" id="password" placeholder="Enter Password" required>
-                <button type="button" id="generatePasswordBtn">Generate Password</button>
+                <input type="text" id="password" placeholder="Enter Password" required><br>
+                <button type="button" id="generatePasswordBtn" class="passBtn">Generate Password</button> <br>
                 <!-- series of checkboxes that will allow the user to generate what type of password they would like to generate -->
                 <input type="checkbox" class="radioCheck" name="difficultyCheck" id="c01" value="Yes" onclick="check(this);" />Easy to Say
                 <input type="checkbox" class="radioCheck" name="difficultyCheck" id="c02" value="No"  onclick= "check(this);" />Easy to Read

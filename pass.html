@@ -37,7 +37,7 @@
 
 
                     <div class="user-input">
-                        <button type="button" id="submitBtn" name="submitBtn" class="registeration-btn">Recover Pass</button>
+                        <button type="button" id="submitBtn" name="submitBtn" class="registeration-btn">Recover Password</button>
                         </div>
 
                         <div class="login-continer">
@@ -82,58 +82,66 @@
         const database = getDatabase(app); 
 
 
-        //chain of reposability pattern for secuirty questions
-        class SecurityQuestionChain {
-            setNextHandler(handler) {
-                this.nextHandler = handler;
-        }
-
-        chainRequest(question, answer) {
-            if (this.nextHandler) {
-                this.nextHandler.handleRequest(question, answer);
-            } else {
-                // This is the end of the chain, handle it appropriately (e.g., show an error message)
-            }
-        }
+       // Chain of responsibility pattern for security questions
+        // Chain of responsibility pattern for security questions
+// Chain of responsibility pattern for security questions
+// Chain of responsibility pattern for security questions
+// Chain of responsibility pattern for security questions
+class SecurityQuestionChain {
+    setNextHandler(handler) {
+        this.nextHandler = handler;
     }
 
-    // Question one
-    class FavToyQuestion extends SecurityQuestionChain {
-        handleRequest(question, answer) {
-            if (question === "Favorite Childhood Toy or Game" && answer === "valid_answer_1") {
-                // Handle the validation (e.g., show a success message)
-                alert("Security question 1 is valid!");
-            } else {
-                // Pass the request to the next handler in the chain
-                this.chainRequest(question, answer);
-            }
+    chainRequest(question, inputAnswer, storedAnswer) {
+
+        if (this.nextHandler) {
+            
+            return this.nextHandler.chainRequest(question, inputAnswer, storedAnswer);
+        } else {
+            return false; // End of the chain
         }
     }
+}
 
-    // Question two
-    class VacationDestinationQuestion extends SecurityQuestionChain {
-        handleRequest(question, answer) {
-            if (question === "Dream Vacation Destination" && answer === "valid_answer_2") {
-                alert("Security question 2 is valid!");
-            } else {
-                this.chainRequest(question, answer);
-            }
+// Question one
+class FavToyQuestion extends SecurityQuestionChain {
+    chainRequest(question, inputAnswer, userData) {
+        if (userData && userData.question_one) {
+            const storedAnswer = userData.question_one.trim();
+            return inputAnswer.trim() === storedAnswer;
+        } else {
+            return false; // Error in question
         }
     }
+}
 
-    // Question three
-    class FirstJobQuestion extends SecurityQuestionChain {
-        handleRequest(question, answer) {
-            if (question === "First Job or Company" && answer === "valid_answer_3") {
-                alert("Security question 3 is valid!");
-            } else {
-                this.chainRequest(question, answer);
-            }
+// Question two
+class VacationDestinationQuestion extends SecurityQuestionChain {
+    chainRequest(question, inputAnswer, userData) {
+        if (userData && userData.question_two) {
+            const storedAnswer = userData.question_two.trim();
+            return inputAnswer.trim() === storedAnswer;
+
+        } else {
+            return false; // Error in question
         }
     }
+}
 
-    // Main function - handles switching questions
-    function recoverPassword(email, answer1, answer2, answer3) {
+// Question three
+class FirstJobQuestion extends SecurityQuestionChain {
+    chainRequest(question, inputAnswer, userData) {
+        if (userData && userData.question_three) {
+            const storedAnswer = userData.question_three.trim();
+            return inputAnswer.trim() === storedAnswer;
+        } else {
+            return false; // Error in question
+        }
+    }
+}
+
+// Main function - handles switching questions
+function recoverPassword(email, answer1, answer2, answer3, userData) {
     // Create and link the chain of responsibility
     const favoriteToyQuestion = new FavToyQuestion();
     const vacationDestinationQuestion = new VacationDestinationQuestion();
@@ -142,8 +150,20 @@
     favoriteToyQuestion.setNextHandler(vacationDestinationQuestion);
     vacationDestinationQuestion.setNextHandler(firstJobQuestion);
 
-    // Trigger the chain with the first question
-    favoriteToyQuestion.handleRequest("Favorite Childhood Toy or Game", answer1);
+    // Trigger the chain with the user's answers and userData
+    const isValidQuestion1 = favoriteToyQuestion.chainRequest("Favorite Childhood Toy or Game", answer1, userData);
+    const isValidQuestion2 = vacationDestinationQuestion.chainRequest("Dream Vacation Destination", answer2, userData);
+    const isValidQuestion3 = firstJobQuestion.chainRequest("First Job or Company", answer3, userData);
+
+    //retirving the master password from the database
+    const masterPassword = userData.master_password;
+
+    // Check if all three questions are valid
+    if (isValidQuestion1 && isValidQuestion2 && isValidQuestion3) {
+        alert('User Master Password: ' + masterPassword);
+    } else {
+        alert('Security questions are not valid');
+    }
 }
 
 // ...
@@ -153,84 +173,46 @@ submitBtn.addEventListener('click', (e) => {
     var username = document.getElementById('username').value;
 
     signInWithEmailAndPassword(auth, email, username)
-    .then((userCredential) => {
-        const user = userCredential.user;
-        const userRef = ref(database, 'Users/' + user.uid);
+        .then((userCredential) => {
+            const user = userCredential.user;
+            const userRef = ref(database, 'Users/' + user.uid);
 
+            get(userRef)
+                .then((snapshot) => {
+                    const userData = snapshot.val();
 
-        // Retrieve answers from the user input
-        const answer1 = document.getElementById("questions-1").value;
-        const answer2 = document.getElementById("questions-2").value;
-        const answer3 = document.getElementById("questions-3").value;
+                    // Check if user data is available
+                    if (userData) {
+                        // Retrieve answers from the user input
+                        const answer1 = document.getElementById("questions-1").value;
+                        const answer2 = document.getElementById("questions-2").value;
+                        const answer3 = document.getElementById("questions-3").value;
 
-        // Call the password recovery function
-        recoverPassword(email, answer1, answer2, answer3);
+                        // Call the password recovery function with user data
+                        recoverPassword(email, answer1, answer2, answer3, userData);
 
-        
-        get(userRef).then((snapshot) => {
-            const userData = snapshot.val();
-
-            // Assuming you have a field named 'master_password' in your database
-            const masterPassword = userData.master_password;
-
-            update(userRef, {})
-            .then(() =>{
-                alert('User Master Password: ' + masterPassword);
-                window.location.href = "login.html";
-            })
-            .catch((error) => {
-                alert('Error updating user: ' + error.message);
-            });
-        })
-
-    })
-    .catch((error) => {
-        const errorMessage = error.message;
-        alert(errorMessage);
-    });
-});
-
-
-
-        //------------------------------------------------------------------------------------------------------------------
-        //submit button listener that handles recovering the password upon click
-        /*
-        submitBtn.addEventListener('click', (e) => {
-    var email = document.getElementById('email').value;
-    var username = document.getElementById('username').value;
-
-    signInWithEmailAndPassword(auth, email, username)
-    .then((userCredential) => {
-        const user = userCredential.user;
-
-        const userRef = ref(database, 'Users/' + user.uid);
-
-        get(userRef).then((snapshot) => {
-            const userData = snapshot.val();
-
-            // Assuming you have a field named 'master_password' in your database
-            const masterPassword = userData.master_password;
-
-            update(userRef, {})
-            .then(() =>{
-                alert('User Master Password: ' + masterPassword);
-                window.location.href = "login.html";
-            })
-            .catch((error) => {
-                alert('Error updating user: ' + error.message);
-            });
+                        update(userRef, {})
+                            .then(() => {
+                                window.location.href = "login.html";
+                            })
+                            .catch((error) => {
+                                alert('Error updating user: ' + error.message);
+                            });
+                    } else {
+                        alert('User data not found');
+                    }
+                })
+                .catch((error) => {
+                    alert('Error retrieving user data: ' + error.message);
+                });
         })
         .catch((error) => {
-            alert('Error getting user data: ' + error.message);
+            const errorMessage = error.message;
+            alert(errorMessage);
         });
-    })
-    .catch((error) => {
-        const errorMessage = error.message;
-        alert(errorMessage);
-    });
 });
 
-*/
+
 
 
     </script>
