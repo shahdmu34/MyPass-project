@@ -15,7 +15,7 @@
                 <a href="home.html" class="menu  ">Edit Profile</a>
                 <a href="payment.html" class="menu is-active">Payment Information</a>
                 <a href="identity.html" class="menu">Identity</a>
-                <a href="secure.html" class="menu">Secure notes</a>
+                <a href="secure.html" class="menu">Secure Notes</a>
                 <a href="login.html" class="menu">Sign Out</a>
 
             </nav>
@@ -123,28 +123,77 @@
                 }
             });
 
+            ////-------------Data Mask and Unmask Segment-------------
 
-            const creditCardField = document.getElementById('creditCard');
-            const cvvField = document.getElementById('CVV');
-            const expirationField = document.getElementById('Expiration');
-            const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
+            //Subject
+            class Mask {
+                constructor() {
 
-            let isSensitiveInfoVisible = false;
+                }
 
-            toggleSensitiveInfoButton.addEventListener('click', function() {
-                isSensitiveInfoVisible = !isSensitiveInfoVisible;
+                revealInformation() {
 
-                if (isSensitiveInfoVisible) {
+                }
+            }
+
+            //Real Subject
+            class RealMask extends Mask {
+
+                constructor () {
+                    super(); // Invoke the superclass constructor
+                    console.log("RealMask Initialized")
+                }
+                revealInformation () {
+                    const creditCardField = document.getElementById('creditCard');
+                    const cvvField = document.getElementById('CVV');
+                    const expirationField = document.getElementById('Expiration');
+                    const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
+
                     creditCardField.setAttribute('type', 'text');
                     cvvField.setAttribute('type', 'text');
                     expirationField.setAttribute('type', 'text');
                     toggleSensitiveInfoButton.textContent = 'Mask Sensitive Information';
-                } else {
-                    creditCardField.setAttribute('type', 'password');
-                    cvvField.setAttribute('type', 'password');
-                    expirationField.setAttribute('type', 'password');
-                    toggleSensitiveInfoButton.textContent = 'Unmask Sensitive Information';
                 }
+            }
+
+            //Proxy
+            class ProtectionProxy extends Mask {
+                static sensitiveInfo;
+                static realMask;
+
+                constructor (isSensitiveInfoVisible) {
+                    super(); // Invoke the superclass constructor
+                    console.log("ProtectionProxy Initialized")
+                    this.sensitiveInfo = isSensitiveInfoVisible;
+                    this.realMask = new RealMask();
+                }
+
+                revealInformation () {
+                    const creditCardField = document.getElementById('creditCard');
+                    const cvvField = document.getElementById('CVV');
+                    const expirationField = document.getElementById('Expiration');
+                    const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
+
+                    if (this.sensitiveInfo) {
+                        this.realMask.revealInformation();
+                    }
+                    else {
+                        creditCardField.setAttribute('type', 'password');
+                        cvvField.setAttribute('type', 'password');
+                        expirationField.setAttribute('type', 'password');
+                        toggleSensitiveInfoButton.textContent = 'Unmask Sensitive Information';
+                    }
+                }
+            }
+
+            const toggleButton = document.getElementById('toggleSensitiveInfo');
+            let isSensitiveInfoVisible = false;
+
+            toggleButton.addEventListener('click', function() {
+                isSensitiveInfoVisible = !isSensitiveInfoVisible;
+                console.log(isSensitiveInfoVisible.toString());
+                let informationProtector = new ProtectionProxy(isSensitiveInfoVisible);
+                informationProtector.revealInformation();
             });
         </script>
 

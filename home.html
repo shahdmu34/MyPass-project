@@ -13,7 +13,7 @@
                 <a href="home.html" class="menu is-active">Edit Profile</a>
                 <a href="payment.html" class="menu">Payment Information</a>
                 <a href="identity.html" class="menu">Identity</a>
-                <a href="secure.html" class="menu">Secure notes</a>
+                <a href="secure.html" class="menu">Secure Notes</a>
                 <a href="login.html" class="menu">Sign Out</a>
             </nav>
         </aside>
@@ -145,7 +145,76 @@
               }
         });
 
+        ////-------------Data Mask and Unmask Segment-------------
 
+        //Subject
+        class Mask {
+            constructor() {
+
+            }
+
+            revealInformation() {
+
+            }
+        }
+
+        //Real Subject
+        class RealMask extends Mask {
+
+            constructor () {
+                super(); // Invoke the superclass constructor
+                console.log("RealMask Initialized")
+            }
+            revealInformation () {
+                const usernameField = document.getElementById('username');
+                const passwordField = document.getElementById('password');
+                const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
+
+                usernameField.setAttribute('type', 'text');
+                passwordField.setAttribute('type', 'text');
+                toggleSensitiveInfoButton.textContent = 'Mask Sensitive Information';
+            }
+        }
+
+        //Proxy
+        class ProtectionProxy extends Mask {
+            static sensitiveInfo;
+            static realMask;
+
+            constructor (isSensitiveInfoVisible) {
+                super(); // Invoke the superclass constructor
+                console.log("ProtectionProxy Initialized")
+                this.sensitiveInfo = isSensitiveInfoVisible;
+                this.realMask = new RealMask();
+            }
+
+            revealInformation () {
+                const usernameField = document.getElementById('username');
+                const passwordField = document.getElementById('password');
+                const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
+
+                if (this.sensitiveInfo) {
+                    this.realMask.revealInformation();
+                }
+                else {
+                    usernameField.setAttribute('type', 'password');
+                    passwordField.setAttribute('type', 'password');
+                    toggleSensitiveInfoButton.textContent = 'Unmask Sensitive Information';
+                }
+            }
+        }
+
+        const toggleButton = document.getElementById('toggleSensitiveInfo');
+        let isSensitiveInfoVisible = false;
+
+        toggleButton.addEventListener('click', function() {
+            isSensitiveInfoVisible = !isSensitiveInfoVisible;
+            console.log(isSensitiveInfoVisible.toString());
+            let informationProtector = new ProtectionProxy(isSensitiveInfoVisible);
+            informationProtector.revealInformation();
+        });
+
+        /*
         const usernameField = document.getElementById('username');
         const passwordField = document.getElementById('password');
         const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
@@ -164,7 +233,7 @@
               passwordField.setAttribute('type', 'password');
               toggleSensitiveInfoButton.textContent = 'Unmask Sensitive Information';
             }
-        });
+        });*/
     </script>
 
 

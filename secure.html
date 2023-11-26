@@ -15,7 +15,7 @@
                 <a href="home.html" class="menu">Edit Profile</a>
                 <a href="payment.html" class="menu">Payment Information</a>
                 <a href="identity.html" class="menu">Identity</a>
-                <a href="secure.html" class="menu is-active">Secure notes</a>
+                <a href="secure.html" class="menu is-active">Secure Notes</a>
                 <a href="login.html" class="menu">Sign Out</a>
 
             </nav>
@@ -88,9 +88,9 @@
                     onValue(userRef, (snapshot) => {
                         const userData = snapshot.val();
                         if (userData) {
-                            document.getElementById('passNum').value = userData.passportNumber || ''; // Set credit card
-                            document.getElementById('License').value = userData.cvv || ''; // Set CVV
-                            document.getElementById('ssn').value = userData.ssn || ''; // Set Expiration
+                            document.getElementById('passNum').value = userData.passportNumber || ''; // Set passport number
+                            document.getElementById('License').value = userData.licenseNumber || ''; // Set license number
+                            document.getElementById('ssn').value = userData.ssn || ''; // Set social security number
                         }
                     });
 
@@ -98,7 +98,8 @@
                     const editProfileForm = document.querySelector('.edit-profile-form');
 
                     // Add event listener for form submission
-                    submitBtn.addEventListener('click', () => {
+                    editProfileForm.addEventListener('submit', (e) => {
+                        e.preventDefault(); // Prevent the default form submission behavior
 
                         const passportNum = document.getElementById('passNum').value;
                         const licenseNum = document.getElementById('License').value;
@@ -107,7 +108,7 @@
                         // Update user data in the database
                         update(userRef, {
                             passportNumber: passportNum,
-                            cvv: licenseNum,
+                            licenseNumber: licenseNum,
                             ssn: socialSecurity
                         }).then(() => {
                             alert('User information updated successfully.');
@@ -123,31 +124,80 @@
             }
         });
 
+        ////-------------Data Mask and Unmask Segment-------------
 
+        //Subject
+        class Mask {
+            constructor() {
 
+            }
 
-        const passportNumField = document.getElementById('passNum');
-        const licenseNumField = document.getElementById('License');
-        const socialSecurityField = document.getElementById('ssn');
-        const toggleSensitiveInfoButton = document.getElementById('toggleInfo');
+            revealInformation() {
 
-        let isSensitiveInfoVisible = false;
+            }
+        }
 
-        toggleSensitiveInfoButton.addEventListener('click', function() {
-            isSensitiveInfoVisible = !isSensitiveInfoVisible;
+        //Real Subject
+        class RealMask extends Mask {
 
-            if (isSensitiveInfoVisible) {
+            constructor () {
+                super(); // Invoke the superclass constructor
+                console.log("RealMask Initialized")
+            }
+            revealInformation () {
+                const passportNumField = document.getElementById('passNum');
+                const licenseNumField = document.getElementById('License');
+                const socialSecurityField = document.getElementById('ssn');
+                const toggleSensitiveInfoButton = document.getElementById('toggleInfo');
+
                 passportNumField.setAttribute('type', 'text');
                 licenseNumField.setAttribute('type', 'text');
                 socialSecurityField.setAttribute('type', 'text');
                 toggleSensitiveInfoButton.textContent = 'Mask Sensitive Information';
-            } else {
-                passportNumField.setAttribute('type', 'password');
-                licenseNumField.setAttribute('type', 'password');
-                socialSecurityField.setAttribute('type', 'password');
-                toggleSensitiveInfoButton.textContent = 'Unmask Sensitive Information';
             }
+        }
+
+        //Proxy
+        class ProtectionProxy extends Mask {
+            static sensitiveInfo;
+            static realMask;
+
+            constructor (isSensitiveInfoVisible) {
+                super(); // Invoke the superclass constructor
+                console.log("ProtectionProxy Initialized")
+                this.sensitiveInfo = isSensitiveInfoVisible;
+                this.realMask = new RealMask();
+            }
+
+            revealInformation () {
+                const passportNumField = document.getElementById('passNum');
+                const licenseNumField = document.getElementById('License');
+                const socialSecurityField = document.getElementById('ssn');
+                const toggleSensitiveInfoButton = document.getElementById('toggleInfo');
+
+                if (this.sensitiveInfo) {
+                    this.realMask.revealInformation();
+                }
+                else {
+                    passportNumField.setAttribute('type', 'password');
+                    licenseNumField.setAttribute('type', 'password');
+                    socialSecurityField.setAttribute('type', 'password');
+                    toggleSensitiveInfoButton.textContent = 'Unmask Sensitive Information';
+                }
+            }
+        }
+
+        const toggleButton = document.getElementById('toggleInfo');
+        let isSensitiveInfoVisible = false;
+
+        toggleButton.addEventListener('click', function() {
+            isSensitiveInfoVisible = !isSensitiveInfoVisible;
+            console.log(isSensitiveInfoVisible.toString());
+            let informationProtector = new ProtectionProxy(isSensitiveInfoVisible);
+            informationProtector.revealInformation();
         });
+
+
     </script>
     </div>
 
