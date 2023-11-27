@@ -16,6 +16,7 @@
             <h1 class="title">MyPass</h1>
             <h2>Register Account</h2>
 
+            <!--user input feilds-->
             <div class="userInput">
                 <input type="text" id="username" placeholder="Enter Username" required>
             </div>
@@ -315,8 +316,10 @@
         }
     });
 
+    //event listener for register button
     submitBtn.addEventListener('click', (e) =>{
 
+        //retreiving input feilds
         var email = document.getElementById('email').value;
         var username = document.getElementById('username').value;
 
@@ -326,12 +329,15 @@
         var question3 = document.getElementById('questions-3').value;
 
 
+        //create account using firebase auth
         createUserWithEmailAndPassword(auth, email, username)
             .then((userCredential) => {
-                // Signed up
+                // Signed up with user id
                 const user = userCredential.user;
 
+
                 set(ref(database,'Users/' + user.uid), {
+                    //pushing user data to the database
                     email: email,
                     username: username,
                     master_password:master_password,
@@ -340,7 +346,8 @@
                     question_three: question3,
 
                 })
-                    .then(() =>{
+                    .then(() =>{ 
+                        //account creation sucess
                         alert('User created!');
                         window.location.href = "login.html";
                         //user was created

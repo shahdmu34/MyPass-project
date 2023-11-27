@@ -17,7 +17,7 @@
                     <h1 class="title">MyPass</h1>
                     <h2>Recover Password</h2>
 
-
+                    <!--user input feilds-->
                     <div class="userInput">
                         <input type="text" id="username" placeholder="Enter username" required>
                     </div>
@@ -84,27 +84,29 @@
 
        // Chain of responsibility pattern for security questions
 
-class SecurityQuestionChain {
-    setNextHandler(handler) {
-        this.nextHandler = handler;
-    }
-
-    chainRequest(question, inputAnswer, storedAnswer) {
-
-        if (this.nextHandler) {
+        class SecurityQuestionChain {
+            setNextHandler(handler) {
+                //creating handler
+                this.nextHandler = handler;
+            }
             
-            return this.nextHandler.chainRequest(question, inputAnswer, storedAnswer);
-        } else {
-            return false; // End of the chain
+            chainRequest(question, inputAnswer, storedAnswer) {
+                //checks if handler already exists
+                if (this.nextHandler) {
+                    
+                    return this.nextHandler.chainRequest(question, inputAnswer, storedAnswer);
+                } else {
+                    return false; // End of the chain
+                }
+            }
         }
-    }
-}
 
 // Question one
 class FavToyQuestion extends SecurityQuestionChain {
     chainRequest(question, inputAnswer, userData) {
-        if (userData && userData.question_one) {
-            const storedAnswer = userData.question_one.trim();
+        if (userData && userData.question_one) { //checks if userdata exists
+            const storedAnswer = userData.question_one.trim();    
+              //checks if the user answer matches stored answer from database
             return inputAnswer.trim() === storedAnswer;
         } else {
             //this.chainRequest(question, inputAnswer, userData);
@@ -116,8 +118,9 @@ class FavToyQuestion extends SecurityQuestionChain {
 // Question two
 class VacationDestinationQuestion extends SecurityQuestionChain {
     chainRequest(question, inputAnswer, userData) {
-        if (userData && userData.question_two) {
-            const storedAnswer = userData.question_two.trim();
+        if (userData && userData.question_two) {       //checks if userdata exists
+            const storedAnswer = userData.question_two.trim();     
+             //checks if the user answer matches stored answer from database
             return inputAnswer.trim() === storedAnswer;
 
         } else {
@@ -130,8 +133,9 @@ class VacationDestinationQuestion extends SecurityQuestionChain {
 // Question three
 class FirstJobQuestion extends SecurityQuestionChain {
     chainRequest(question, inputAnswer, userData) {
-        if (userData && userData.question_three) {
-            const storedAnswer = userData.question_three.trim();
+        if (userData && userData.question_three) {       //checks if userdata exists
+            const storedAnswer = userData.question_three.trim();     
+            //checks if the user answer matches stored answer from database
             return inputAnswer.trim() === storedAnswer;
         } else {
             return false; // Error in question
@@ -140,13 +144,14 @@ class FirstJobQuestion extends SecurityQuestionChain {
     }
 }
 
-// Main function - handles switching questions
+// handles switching questions
 function recoverPassword(email, answer1, answer2, answer3, userData) {
-    // Create and link the chain of responsibility
+    // Create & link the chain 
     const favoriteToyQuestion = new FavToyQuestion();
     const vacationDestinationQuestion = new VacationDestinationQuestion();
     const firstJobQuestion = new FirstJobQuestion();
 
+    //creating chain next quesiton
     favoriteToyQuestion.setNextHandler(vacationDestinationQuestion);
     vacationDestinationQuestion.setNextHandler(firstJobQuestion);
 
@@ -166,7 +171,7 @@ function recoverPassword(email, answer1, answer2, answer3, userData) {
     }
 }
 
-// ...
+// submit button handler
 
 submitBtn.addEventListener('click', (e) => {
     var email = document.getElementById('email').value;
@@ -193,6 +198,7 @@ submitBtn.addEventListener('click', (e) => {
 
                         update(userRef, {})
                             .then(() => {
+                                //redirect to login
                                 window.location.href = "login.html";
                             })
                             .catch((error) => {

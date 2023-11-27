@@ -14,7 +14,7 @@
                     <h1 class="title">MyPass</h1>
                     <h2>Login</h2>
 
-
+                    <!--user login input feilds-->
                     <div class="userInput">
                         <input type="text" id="username" placeholder="Enter username" required>
                     </div>
@@ -89,16 +89,20 @@
                 LoginAuthPattern.instance = this;
         }
 
+        //singing in the user using firebase auth
         signInWithEmailAndPassword(email, username) {
             return signInWithEmailAndPassword(this.auth, email, username)
             .then((userCredential) => {
+                //user id
                 const user = userCredential.user;
                 const past_login = new Date();
 
                 update(ref(this.database, 'Users/' + user.uid), {
                 pastLogin: past_login,
+                //updating the past login time
                 })
                 .then(() => {
+                    //message for successful login
                     alert('User ' + email + ' is logged in!');
                     window.location.href = "home.html";
                 })
@@ -113,10 +117,11 @@
         }
         }
 
-        // Usage
+        // creating instance
         const LoginAuthInstance= new LoginAuthPattern();
 
         submitBtn.addEventListener('click', (e) => {
+            //pulling in user infor when the button is clicked
         const email = document.getElementById('email').value;
         const username = document.getElementById('username').value;
 
