@@ -6,208 +6,254 @@
     <link rel="stylesheet" type="text/css" href="css/home_style.css" />
 </head>
 <body>
-    <div class="container-app">
-        <aside class="sideNav">
-            <h3>MyPass</h3>
+<div class="container-app">
+    <aside class="sideNav">
+        <h3>MyPass</h3>
 
-            <nav class="menuBar">
+        <nav class="menuBar">
 
-                <a href="home.html" class="menu  ">Edit Profile</a>
-                <a href="payment.html" class="menu is-active">Payment Information</a>
-                <a href="identity.html" class="menu">Identity</a>
-                <a href="secure.html" class="menu">Secure Notes</a>
-                <a href="login.html" class="menu">Sign Out</a>
+            <a href="home.html" class="menu  ">Edit Profile</a>
+            <a href="payment.html" class="menu is-active">Payment Information</a>
+            <a href="identity.html" class="menu">Identity</a>
+            <a href="secure.html" class="menu">Secure Notes</a>
+            <a href="login.html" class="menu">Sign Out</a>
 
-            </nav>
-        </aside>
+        </nav>
+    </aside>
 
-        <main class="content">
-            <h1>Payment information</h1>
-            <!--credit card information-->
-            <form class="edit-profile-form">
-                <div class="form-group">
-                    <label for="creditCard">Credit Card Number</label>
-                    <input type="password" id="creditCard" name="creditCard" required>
-                </div>
+    <main class="content">
+        <h1>Payment information</h1>
+        <!--credit card information-->
+        <form class="edit-profile-form">
+            <div id="creditCardContainer">
+                <!-- Dynamic credit card fields will be populated here -->
+            </div>
 
-                <div class="form-group">
-                    <label for="CVV">CVV</label>
-                    <input type="password" id="CVV" name="CVV" required>
-                </div>
+            <div>
+                <button id="addCreditCard" type="button">Add Credit Card</button>
+                <button id="toggleSensitiveInfo" type="button">Unmask Sensitive Information</button>
+            </div>
+            <br>
 
-                <div class="form-group">
-                    <label for="Expiration">Expiration Date</label>
-                    <input type="password" id="Expiration" name="Expiration" required>
-                </div>
+            <div>
+                <button type="submit">Save Information</button>
+            </div>
+        </form>
+    </main>
 
-                <div>
-                    <button id="toggleSensitiveInfo" type="button">Unmask Sensitive Information</button>
-                </div>
-                <br>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+        import { getDatabase, set, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAaJ0fhXXd_WEuTwUTQJpa211weqA7ZQ6w",
+            authDomain: "term-project-476.firebaseapp.com",
+            projectId: "term-project-476",
+            storageBucket: "term-project-476.appspot.com",
+            messagingSenderId: "276408407460",
+            appId: "1:276408407460:web:b05ec30e174fb0c3441d31"
+        };
 
-                <div>
-                    <button type="submit">Save Information</button>
-                </div>
-            </form>
-        </main>
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        // Initialize user authentication
+        const auth = getAuth(app);
+        // Initialize database
+        const database = getDatabase(app);
 
-        <script type="module">
-            // Import the functions you need from the SDKs you need
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-            import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
-            import { getDatabase, set, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+        //code author: Zeinab Alrubaiee
 
-            // Your web app's Firebase configuration
-            const firebaseConfig = {
-                apiKey: "AIzaSyAaJ0fhXXd_WEuTwUTQJpa211weqA7ZQ6w",
-                authDomain: "term-project-476.firebaseapp.com",
-                projectId: "term-project-476",
-                storageBucket: "term-project-476.appspot.com",
-                messagingSenderId: "276408407460",
-                appId: "1:276408407460:web:b05ec30e174fb0c3441d31"
-            };
+        // Function to add a new set of credit card fields
+        function addNewCreditCardFields() {
+            const creditCardContainer = document.getElementById('creditCardContainer');
+            const creditCardCount = creditCardContainer.getElementsByClassName('credit-card-info').length + 1;
 
-            // Initialize Firebase
-            const app = initializeApp(firebaseConfig);
-            // Initialize user authentication
-            const auth = getAuth(app);
-            // Initialize database
-            const database = getDatabase(app);
+            const newCreditCardFields = document.createElement('div');
+            newCreditCardFields.classList.add('credit-card-info');
+            newCreditCardFields.innerHTML = `
+                    <div class="form-group">
+                        <label for="creditCard${creditCardCount}">Credit Card Number</label>
+                        <input type="password" id="creditCard${creditCardCount}" name="creditCard" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="CVV${creditCardCount}">CVV</label>
+                        <input type="password" id="CVV${creditCardCount}" name="CVV" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="Expiration${creditCardCount}">Expiration Date</label>
+                        <input type="password" id="Expiration${creditCardCount}" name="Expiration" required>
+                    </div>
+                `;
 
+            creditCardContainer.appendChild(newCreditCardFields);
+        }
 
-                    //code author: Zeinab Alrubaiee
+        // Event listener for adding new credit card fields
+        const addCreditCardButton = document.getElementById('addCreditCard');
+        addCreditCardButton.addEventListener('click', addNewCreditCardFields);
 
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in.
+                const currentUser = auth.currentUser;
 
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    // User is signed in.
-                    const user = auth.currentUser;
+                if (currentUser) {
+                    const userRef = ref(database, 'Users/' + currentUser.uid);
 
-                    if (user) {
-                        // The user object has basic properties such as display name, email, etc.
+                    onValue(userRef, (snapshot) => {
+                        const userData = snapshot.val();
+                        if (userData) {
+                            // Clear previous credit card fields
+                            const creditCardContainer = document.getElementById('creditCardContainer');
+                            creditCardContainer.innerHTML = '';
 
-                        // Inside onAuthStateChanged function
-                        const userRef = ref(database, 'Users/' + user.uid);
+                            // Populate existing credit card fields dynamically
+                            Object.keys(userData).forEach((key) => {
+                                if (key.startsWith('creditCard')) {
+                                    const cardNumber = key.replace('creditCard', '');
+                                    const field = key.slice(-1);
+                                    const value = userData[key];
 
-                        onValue(userRef, (snapshot) => {
-                            const userData = snapshot.val();
-                            if (userData) {
-                                document.getElementById('creditCard').value = userData.creditCard || ''; // Set credit card
-                                document.getElementById('CVV').value = userData.cvv || ''; // Set CVV
-                                document.getElementById('Expiration').value = userData.expiration || ''; // Set Expiration
-                            }
-                        });
+                                    const cardInfoDiv = document.createElement('div');
+                                    cardInfoDiv.classList.add('credit-card-info');
+                                    cardInfoDiv.innerHTML = `
+                                            <div class="form-group">
+                                                <label for="creditCard${cardNumber}">Credit Card Number</label>
+                                                <input type="password" id="creditCard${cardNumber}" name="creditCard" required value="${value}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="CVV${cardNumber}">CVV</label>
+                                                <input type="password" id="CVV${cardNumber}" name="CVV" required value="${userData['cvv' + field]}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="Expiration${cardNumber}">Expiration Date</label>
+                                                <input type="password" id="Expiration${cardNumber}" name="Expiration" required value="${userData['expiration' + field]}">
+                                            </div>
+                                        `;
 
-                        // Select the form element
-                        const editProfileForm = document.querySelector('.edit-profile-form');
-
-                        // Add event listener for form submission
-                        editProfileForm.addEventListener('submit', (e) => {
-                            e.preventDefault(); // Prevent the default form submission behavior
-
-                            const credit = document.getElementById('creditCard').value;
-                            const cvvCode = document.getElementById('CVV').value;
-                            const expiration = document.getElementById('Expiration').value;
-
-                            // Update user data in the database
-                            update(userRef, {
-                                creditCard: credit,
-                                cvv: cvvCode,
-                                expiration: expiration
-                            }).then(() => {
-                                alert('User information updated successfully.');
-                            }).catch((error) => {
-                                console.error('Error updating user information:', error);
-                                // Handle errors or display an error message to the user
+                                    creditCardContainer.appendChild(cardInfoDiv);
+                                }
                             });
-                        });
-                    }
-                } else {
-                    // No user is signed in.
-                    console.error("User log in error.")
+                        }
+                    });
+
+                    const editProfileForm = document.querySelector('.edit-profile-form');
+
+                    editProfileForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+
+                        const creditCardData = {};
+
+                        // Collect updated credit card information from all sets of fields
+                        const creditCardContainers = document.getElementsByClassName('credit-card-info');
+                        for (let i = 0; i < creditCardContainers.length; i++) {
+                            const creditCardNum = document.getElementById(`creditCard${i + 1}`).value;
+                            const cvv = document.getElementById(`CVV${i + 1}`).value;
+                            const expiration = document.getElementById(`Expiration${i + 1}`).value;
+
+                            creditCardData[`creditCard${i + 1}`] = creditCardNum;
+                            creditCardData[`cvv${i + 1}`] = cvv;
+                            creditCardData[`expiration${i + 1}`] = expiration;
+                        }
+
+                        // Update user data in the database
+                        update(userRef, creditCardData)
+                            .then(() => {
+                                alert('User information updated successfully.');
+                            })
+                            .catch((error) => {
+                                console.error('Error updating user information:', error);
+                            });
+                    });
                 }
-            });
+            } else {
+                console.error("User log in error.")
+            }
+        });
 
-            ////-------------Data Mask and Unmask Segment-------------
+        ////-------------Data Mask and Unmask Segment-------------
 
-            //Subject
-            class Mask {
-                constructor() {
+        //Subject
+        class Mask {
+            constructor() {
 
-                }
-
-                revealInformation() {
-
-                }
             }
 
-            //Real Subject
-            class RealMask extends Mask {
+            revealInformation() {
 
-                constructor () {
-                    super(); // Invoke the superclass constructor
-                    console.log("RealMask Initialized")
-                }
-                revealInformation () {
-                    const creditCardField = document.getElementById('creditCard');
-                    const cvvField = document.getElementById('CVV');
-                    const expirationField = document.getElementById('Expiration');
-                    const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
+            }
+        }
 
-                    creditCardField.setAttribute('type', 'text');
-                    cvvField.setAttribute('type', 'text');
-                    expirationField.setAttribute('type', 'text');
-                    toggleSensitiveInfoButton.textContent = 'Mask Sensitive Information';
+        //Real Subject
+        class RealMask extends Mask {
+
+            constructor () {
+                super(); // Invoke the superclass constructor
+                console.log("RealMask Initialized")
+            }
+            revealInformation () {
+                const creditCardFields = document.querySelectorAll('[id^="creditCard"]');
+                const cvvFields = document.querySelectorAll('[id^="CVV"]');
+                const expirationFields = document.querySelectorAll('[id^="Expiration"]');
+                const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
+
+                for (let i = 0; i < creditCardFields.length; i++) {
+                    creditCardFields[i].setAttribute('type', 'text');
+                    cvvFields[i].setAttribute('type', 'text');
+                    expirationFields[i].setAttribute('type', 'text');
                 }
+                toggleSensitiveInfoButton.textContent = 'Mask Sensitive Information';
+            }
+        }
+
+        //Proxy
+        class ProtectionProxy extends Mask {
+            static sensitiveInfo;
+            static realMask;
+
+            constructor (isSensitiveInfoVisible) {
+                super(); // Invoke the superclass constructor
+                console.log("ProtectionProxy Initialized")
+                this.sensitiveInfo = isSensitiveInfoVisible;
+                this.realMask = new RealMask();
             }
 
-            //Proxy
-            class ProtectionProxy extends Mask {
-                static sensitiveInfo;
-                static realMask;
+            revealInformation () {
+                const creditCardFields = document.querySelectorAll('[id^="creditCard"]');
+                const cvvFields = document.querySelectorAll('[id^="CVV"]');
+                const expirationFields = document.querySelectorAll('[id^="Expiration"]');
+                const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
 
-                constructor (isSensitiveInfoVisible) {
-                    super(); // Invoke the superclass constructor
-                    console.log("ProtectionProxy Initialized")
-                    this.sensitiveInfo = isSensitiveInfoVisible;
-                    this.realMask = new RealMask();
+                if (this.sensitiveInfo) {
+                    this.realMask.revealInformation();
                 }
-
-                revealInformation () {
-                    const creditCardField = document.getElementById('creditCard');
-                    const cvvField = document.getElementById('CVV');
-                    const expirationField = document.getElementById('Expiration');
-                    const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
-
-                    if (this.sensitiveInfo) {
-                        this.realMask.revealInformation();
+                else {
+                    for (let i = 0; i < creditCardFields.length; i++) {
+                        creditCardFields[i].setAttribute('type', 'password');
+                        cvvFields[i].setAttribute('type', 'password');
+                        expirationFields[i].setAttribute('type', 'password');
                     }
-                    else {
-                        creditCardField.setAttribute('type', 'password');
-                        cvvField.setAttribute('type', 'password');
-                        expirationField.setAttribute('type', 'password');
-                        toggleSensitiveInfoButton.textContent = 'Unmask Sensitive Information';
-                    }
+                    toggleSensitiveInfoButton.textContent = 'Unmask Sensitive Information';
                 }
             }
+        }
 
-            const toggleButton = document.getElementById('toggleSensitiveInfo');
-            let isSensitiveInfoVisible = false;
+        const toggleButton = document.getElementById('toggleSensitiveInfo');
+        let isSensitiveInfoVisible = false;
 
-            toggleButton.addEventListener('click', function() {
-                isSensitiveInfoVisible = !isSensitiveInfoVisible;
-                console.log(isSensitiveInfoVisible.toString());
-                let informationProtector = new ProtectionProxy(isSensitiveInfoVisible);
-                informationProtector.revealInformation();
-            });
-        </script>
-
-
-    </div>
+        toggleButton.addEventListener('click', function() {
+            isSensitiveInfoVisible = !isSensitiveInfoVisible;
+            console.log(isSensitiveInfoVisible.toString());
+            let informationProtector = new ProtectionProxy(isSensitiveInfoVisible);
+            informationProtector.revealInformation();
+        });
+    </script>
 
 
-
+</div>
 
 </body>
 
