@@ -26,17 +26,10 @@
             <h1>Accounts</h1>
             <!--username,password, account info edit - center-->
             <form class="edit-profile-form">
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="password" id="username" name="username" required>
-                  </div>
-  
-
-                  <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
-                  </div>
-
+                
+                <div id="accountContainer">
+                    <!-- Dynamic account fields will be populated here -->
+                </div>
                 
 
                 <div>
@@ -77,6 +70,188 @@
         // Initialize database
         const database = getDatabase(app);
         const submitBtn = document.getElementById('submit');
+
+        
+        // Function to add a new set of credit card fields
+        function addNewAccountFields() {
+            const accountContainer = document.getElementById('accountContainer');
+            const creditCardCount = creditCardContainer.getElementsByClassName('account-info').length + 1;
+
+            const newAccountFields = document.createElement('div');
+            newAccountFields.classList.add('account-info');
+            newAccountFields.innerHTML = `
+             <div class="form-group">
+                <label for="username">Username:</label>
+                 <input type="password" id="username" name="username" required>
+              </div>
+                            
+
+                 <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                `;
+
+                accountContainer.appendChild(newAccountFields);
+        }
+
+        // Event listener for adding new credit card fields
+        const addAccountButton = document.getElementById('addAccount');
+        addAccountButton.addEventListener('click', addNewAccountFields);
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in.
+                const currentUser = auth.currentUser;
+
+                if (currentUser) {
+                    const userRef = ref(database, 'Users/' + currentUser.uid);
+
+                    onValue(userRef, (snapshot) => {
+                        const userData = snapshot.val();
+                        if (userData) {
+                            // Clear previous credit card fields
+                            const accountContainer = document.getElementById('accountContainer');
+                            accountContainer.innerHTML = '';
+
+                            // Populate existing credit card fields dynamically
+                            Object.keys(userData).forEach((key) => {
+                                if (key.startsWith('creditCard')) {
+                                    const cardNumber = key.replace('creditCard', '');
+                                    const field = key.slice(-1);
+                                    const value = userData[key];
+
+                                    const AccountDiv = document.createElement('div');
+                                    AccountDiv.classList.add('account-infoo');
+                                    AccountDiv.innerHTML = `
+                                            <div class="form-group">
+                                                <label for="username">Username:</label>
+                                                <input type="password" id="username" name="username" required>
+                                            </div>
+                            
+
+                                            <div class="form-group">
+                                                <label for="password">Password:</label>
+                                                <input type="password" id="password" name="password" required>
+                                            </div>
+                                        `;
+
+                                        accountContainer.appendChild(AccountDiv);
+                                }
+                            });
+                        }
+                    });
+
+                    const editProfileForm = document.querySelector('.edit-profile-form');
+
+                    editProfileForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+
+                        const AccountData = {};
+
+                        // Collect updated credit card information from all sets of fields
+                        const AccountContainers = document.getElementsByClassName('account-info');
+                        for (let i = 0; i < AccountContainers.length; i++) {
+                            const username = document.getElementById(`username${i + 1}`).value;
+                            const password = document.getElementById(`password${i + 1}`).value;
+                        
+
+                            AccountData[`username${i + 1}`] = username;
+                            AccountData[`password${i + 1}`] = password;
+                           
+                        }
+
+                        // Update user data in the database
+                        update(userRef, AccountData)
+                            .then(() => {
+                                alert('User information updated successfully.');
+                            })
+                            .catch((error) => {
+                                console.error('Error updating user information:', error);
+                            });
+                    });
+                }
+            } else {
+                console.error("User log in error.")
+            }
+        });
+
+        ////-------------Data Mask and Unmask Segment-------------
+
+        //Subject
+        class Mask {
+            constructor() {
+
+            }
+
+            revealInformation() {
+
+            }
+        }
+
+        //Real Subject
+        class RealMask extends Mask {
+
+            constructor () {
+                super(); // Invoke the superclass constructor
+                console.log("RealMask Initialized")
+            }
+            revealInformation () {
+                const creditCardFields = document.querySelectorAll('[id^="creditCard"]');
+                const cvvFields = document.querySelectorAll('[id^="CVV"]');
+                const expirationFields = document.querySelectorAll('[id^="Expiration"]');
+                const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
+
+                for (let i = 0; i < creditCardFields.length; i++) {
+                    creditCardFields[i].setAttribute('type', 'text');
+                    cvvFields[i].setAttribute('type', 'text');
+                    expirationFields[i].setAttribute('type', 'text');
+                }
+                toggleSensitiveInfoButton.textContent = 'Mask Sensitive Information';
+            }
+        }
+
+        //Proxy
+        class ProtectionProxy extends Mask {
+            static sensitiveInfo;
+            static realMask;
+
+            constructor (isSensitiveInfoVisible) {
+                super(); // Invoke the superclass constructor
+                console.log("ProtectionProxy Initialized")
+                this.sensitiveInfo = isSensitiveInfoVisible;
+                this.realMask = new RealMask();
+            }
+
+            revealInformation () {
+                const creditCardFields = document.querySelectorAll('[id^="creditCard"]');
+                const cvvFields = document.querySelectorAll('[id^="CVV"]');
+                const expirationFields = document.querySelectorAll('[id^="Expiration"]');
+                const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
+
+                if (this.sensitiveInfo) {
+                    this.realMask.revealInformation();
+                }
+                else {
+                    for (let i = 0; i < creditCardFields.length; i++) {
+                        creditCardFields[i].setAttribute('type', 'password');
+                        cvvFields[i].setAttribute('type', 'password');
+                        expirationFields[i].setAttribute('type', 'password');
+                    }
+                    toggleSensitiveInfoButton.textContent = 'Unmask Sensitive Information';
+                }
+            }
+        }
+
+        const toggleButton = document.getElementById('toggleSensitiveInfo');
+        let isSensitiveInfoVisible = false;
+
+        toggleButton.addEventListener('click', function() {
+            isSensitiveInfoVisible = !isSensitiveInfoVisible;
+            console.log(isSensitiveInfoVisible.toString());
+            let informationProtector = new ProtectionProxy(isSensitiveInfoVisible);
+            informationProtector.revealInformation();
+        });
    
     </script>
     </div>
