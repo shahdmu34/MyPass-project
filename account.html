@@ -126,13 +126,13 @@
                                     AccountDiv.innerHTML = `
                                             <div class="form-group">
                                                 <label for="username${accountNumber}">Username:</label>
-                                                <input type="text" id="username${accountNumber}" name="username" required>
+                                                <input type="text" id="username${accountNumber}" name="username" required value="${value}">
                                             </div>
 
 
                                             <div class="form-group">
                                                 <label for="password${accountNumber}">Password:</label>
-                                                <input type="password" id="password${accountNumber}" name="password" required>
+                                                <input type="password" id="password${accountNumber}" name="password" required value="${userData['password' + field]}">
                                             </div>
                                         `;
 
