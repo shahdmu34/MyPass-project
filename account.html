@@ -197,15 +197,11 @@
                 console.log("RealMask Initialized")
             }
             revealInformation () {
-                const creditCardFields = document.querySelectorAll('[id^="creditCard"]');
-                const cvvFields = document.querySelectorAll('[id^="CVV"]');
-                const expirationFields = document.querySelectorAll('[id^="Expiration"]');
+                const passwordFields = document.querySelectorAll('[id^="password"]');
                 const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
 
-                for (let i = 0; i < creditCardFields.length; i++) {
-                    creditCardFields[i].setAttribute('type', 'text');
-                    cvvFields[i].setAttribute('type', 'text');
-                    expirationFields[i].setAttribute('type', 'text');
+                for (let i = 0; i < passwordFields.length; i++) {
+                    passwordFields[i].setAttribute('type', 'text');
                 }
                 toggleSensitiveInfoButton.textContent = 'Mask Sensitive Information';
             }
@@ -224,26 +220,22 @@
             }
 
             revealInformation () {
-                const creditCardFields = document.querySelectorAll('[id^="creditCard"]');
-                const cvvFields = document.querySelectorAll('[id^="CVV"]');
-                const expirationFields = document.querySelectorAll('[id^="Expiration"]');
+                const passwordFields = document.querySelectorAll('[id^="password"]');
                 const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
 
                 if (this.sensitiveInfo) {
                     this.realMask.revealInformation();
                 }
                 else {
-                    for (let i = 0; i < creditCardFields.length; i++) {
-                        creditCardFields[i].setAttribute('type', 'password');
-                        cvvFields[i].setAttribute('type', 'password');
-                        expirationFields[i].setAttribute('type', 'password');
+                    for (let i = 0; i < passwordFields.length; i++) {
+                      passwordFields[i].setAttribute('type', 'password');
                     }
                     toggleSensitiveInfoButton.textContent = 'Unmask Sensitive Information';
                 }
             }
         }
 
-        const toggleButton = document.getElementById('toggleSensitiveInfo');
+        const toggleButton = document.getElementById('toggleInfo');
         let isSensitiveInfoVisible = false;
 
         toggleButton.addEventListener('click', function() {
