@@ -94,6 +94,8 @@
       secureNotesContainer.appendChild(newSecureNotesFields);
     }
 
+    addNewSecureNotesFields();
+
     // Event listener for adding new secure notes fields
     const addSecureNotesButton = document.getElementById('addSecureNotes');
     addSecureNotesButton.addEventListener('click', addNewSecureNotesFields);
@@ -115,8 +117,8 @@
 
               // Populate existing secure notes fields dynamically
               Object.keys(userData).forEach((key) => {
-                if (key.startsWith('secureNotes')) {
-                  const notesNumber = key.replace('secureNotes', '');
+                if (key.startsWith('passport')) {
+                  const notesNumber = key.replace('passport', '');
                   const field = key.slice(-1);
                   const value = userData[key];
 
