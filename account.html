@@ -26,11 +26,11 @@
             <h1>Accounts</h1>
             <!--username,password, account info edit - center-->
             <form class="edit-profile-form">
-                
+
                 <div id="accountContainer">
                     <!-- Dynamic account fields will be populated here -->
                 </div>
-                
+
 
                 <div>
                     <button id="addAccount" type="button">Add New Account</button>
@@ -38,7 +38,7 @@
                     <br>
                     <button id="toggleInfo" type="button">Unmask Sensitive Information</button>
                 </div>
-                
+
                 <br>
 
                 <div>
@@ -71,24 +71,24 @@
         const database = getDatabase(app);
         const submitBtn = document.getElementById('submit');
 
-        
+
         // Function to add a new set of credit card fields
         function addNewAccountFields() {
             const accountContainer = document.getElementById('accountContainer');
-            const creditCardCount = creditCardContainer.getElementsByClassName('account-info').length + 1;
+            const accountCount = accountContainer.getElementsByClassName('account-info').length + 1;
 
             const newAccountFields = document.createElement('div');
             newAccountFields.classList.add('account-info');
             newAccountFields.innerHTML = `
              <div class="form-group">
-                <label for="username${accountNumber}">Username:</label>
-                 <input type="text" id="username${accountNumber}" name="username" required>
+                <label for="username${accountCount}">Username:</label>
+                 <input type="text" id="username${accountCount}" name="username" required>
               </div>
-                            
+
 
                  <div class="form-group">
-                    <label for="password${accountNumber}">Password:</label>
-                    <input type="password" id="password${accountNumber}" name="password" required>
+                    <label for="password${accountCount}">Password:</label>
+                    <input type="password" id="password${accountCount}" name="password" required>
                 </div>
                 `;
 
@@ -128,7 +128,7 @@
                                                 <label for="username${accountNumber}">Username:</label>
                                                 <input type="text" id="username${accountNumber}" name="username" required>
                                             </div>
-                            
+
 
                                             <div class="form-group">
                                                 <label for="password${accountNumber}">Password:</label>
@@ -154,11 +154,11 @@
                         for (let i = 0; i < AccountContainers.length; i++) {
                             const username = document.getElementById(`username${i + 1}`).value;
                             const password = document.getElementById(`password${i + 1}`).value;
-                        
+
 
                             AccountData[`username${i + 1}`] = username;
                             AccountData[`password${i + 1}`] = password;
-                           
+
                         }
 
                         // Update user data in the database
@@ -252,7 +252,7 @@
             let informationProtector = new ProtectionProxy(isSensitiveInfoVisible);
             informationProtector.revealInformation();
         });
-   
+
     </script>
     </div>
 
