@@ -1,211 +1,264 @@
 <!DOCTYPE html>
 <head>
 
-    <meta charset="UTF-8">
-    <title>MyPass</title>
-    <link rel="stylesheet" type="text/css" href="css/home_style.css" />
+  <meta charset="UTF-8">
+  <title>MyPass</title>
+  <link rel="stylesheet" type="text/css" href="css/home_style.css" />
 </head>
 <body>
-    <div class="container-app">
-        <aside class="sideNav">
-            <h3>MyPass</h3>
+<div class="container-app">
+  <aside class="sideNav">
+    <h3>MyPass</h3>
 
-            <nav class="menuBar">
+    <nav class="menuBar">
 
-                <a href="home.html" class="menu">Edit Profile</a>
-                <a href="account.html" class="menu ">Accounts</a>
-                <a href="payment.html" class="menu">Payment Information</a>
-                <a href="identity.html" class="menu">Identity</a>
-                <a href="secure.html" class="menu is-active">Secure Notes</a>
-                <a href="login.html" class="menu">Sign Out</a>
+      <a href="home.html" class="menu">Edit Profile</a>
+      <a href="account.html" class="menu ">Accounts</a>
+      <a href="payment.html" class="menu">Payment Information</a>
+      <a href="identity.html" class="menu">Identity</a>
+      <a href="secure.html" class="menu is-active">Secure Notes</a>
+      <a href="login.html" class="menu">Sign Out</a>
 
-            </nav>
-        </aside>
+    </nav>
+  </aside>
 
-        <main class="content">
-            <h1>Secure Notes</h1>
-            <!--username,password, account info edit - center-->
-            <form class="edit-profile-form">
-                <div class="form-group">
-                    <label for="passNum">Passport Number</label>
-                    <input type="password" id="passNum" name="passNum" required>
-                </div>
+  <main class="content">
+    <h1>Secure Notes</h1>
+    <!-- username, password, account info edit - center -->
+    <form class="edit-profile-form">
+      <div id="secureNotesContainer">
+        <!-- Add an initial empty div for later content -->
+      </div>
 
-                <div class="form-group">
-                    <label for="License">License Number</label>
-                    <input type="password" id="License" name="License" required>
-                </div>
+      <div>
+        <button id="addSecureNotes" type="button">Add Secure Notes</button>
+        <button id="toggleSensitiveInfo" type="button">Unmask Sensitive Information</button>
+      </div>
 
-                <div class="form-group">
-                    <label for="ssn">Social Security Number</label>
-                    <input type="password" id="ssn" name="ssn" required>
-                </div>
+      <br>
 
-                <div>
-                    <button id="toggleInfo" type="button">Unmask Sensitive Information</button>
-                </div>
-                
-                <br>
+      <div>
+        <button type="submit">Save Information</button>
+      </div>
+    </form>
+  </main>
 
-                <div>
-                    <button type="submit">Save Information</button>
-                </div>
-            </form>
-        </main>
-
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
-        import { getDatabase, set, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAaJ0fhXXd_WEuTwUTQJpa211weqA7ZQ6w",
-            authDomain: "term-project-476.firebaseapp.com",
-            projectId: "term-project-476",
-            storageBucket: "term-project-476.appspot.com",
-            messagingSenderId: "276408407460",
-            appId: "1:276408407460:web:b05ec30e174fb0c3441d31"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        // Initialize user authentication
-        const auth = getAuth(app);
-        // Initialize database
-        const database = getDatabase(app);
-        const submitBtn = document.getElementById('submit');
-
-                //code author: Zeinab Alrubaiee
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+    import { getDatabase, set, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
 
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is signed in.
-                const user = auth.currentUser;
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAaJ0fhXXd_WEuTwUTQJpa211weqA7ZQ6w",
+      authDomain: "term-project-476.firebaseapp.com",
+      projectId: "term-project-476",
+      storageBucket: "term-project-476.appspot.com",
+      messagingSenderId: "276408407460",
+      appId: "1:276408407460:web:b05ec30e174fb0c3441d31"
+    };
 
-                if (user) {
-                    // The user object has basic properties such as display name, email, etc.
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    // Initialize user authentication
+    const auth = getAuth(app);
+    // Initialize database
+    const database = getDatabase(app);
 
-                    // Inside onAuthStateChanged function
-                    const userRef = ref(database, 'Users/' + user.uid);
+    //code author: Zeinab Alrubaiee
 
-                    onValue(userRef, (snapshot) => {
-                        const userData = snapshot.val();
-                        if (userData) {
-                            document.getElementById('passNum').value = userData.passportNumber || ''; // Set passport number
-                            document.getElementById('License').value = userData.licenseNumber || ''; // Set license number
-                            document.getElementById('ssn').value = userData.ssn || ''; // Set social security number
-                        }
-                    });
+    // Function to add a new set of secure notes fields
+    function addNewSecureNotesFields() {
+      const secureNotesContainer = document.getElementById('secureNotesContainer');
+      const secureNotesCount = secureNotesContainer.getElementsByClassName('secure-notes-info').length + 1;
 
-                    // Select the form element
-                    const editProfileForm = document.querySelector('.edit-profile-form');
+      const newSecureNotesFields = document.createElement('div');
+      newSecureNotesFields.classList.add('secure-notes-info');
+      newSecureNotesFields.innerHTML = `
+                    <div class="form-group">
+                        <label for="passport${secureNotesCount}">Passport Number</label>
+                        <input type="password" id="passport${secureNotesCount}" name="passport" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="license${secureNotesCount}">License Number</label>
+                        <input type="password" id="license${secureNotesCount}" name="license" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ssn${secureNotesCount}">Social Security Number</label>
+                        <input type="password" id="ssn${secureNotesCount}" name="ssn" required>
+                    </div>
+                `;
 
-                    // Add event listener for form submission
-                    editProfileForm.addEventListener('submit', (e) => {
-                        e.preventDefault(); // Prevent the default form submission behavior
+      secureNotesContainer.appendChild(newSecureNotesFields);
+    }
 
-                        const passportNum = document.getElementById('passNum').value;
-                        const licenseNum = document.getElementById('License').value;
-                        const socialSecurity = document.getElementById('ssn').value;
+    // Event listener for adding new secure notes fields
+    const addSecureNotesButton = document.getElementById('addSecureNotes');
+    addSecureNotesButton.addEventListener('click', addNewSecureNotesFields);
 
-                        // Update user data in the database
-                        update(userRef, {
-                            passportNumber: passportNum,
-                            licenseNumber: licenseNum,
-                            ssn: socialSecurity
-                        }).then(() => {
-                            alert('User information updated successfully.');
-                        }).catch((error) => {
-                            console.error('Error updating user information:', error);
-                            // Handle errors or display an error message to the user
-                        });
-                    });
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in.
+        const currentUser = auth.currentUser;
+
+        if (currentUser) {
+          const userRef = ref(database, 'Users/' + currentUser.uid);
+
+          onValue(userRef, (snapshot) => {
+            const userData = snapshot.val();
+            if (userData) {
+              // Clear previous secure notes fields
+              const secureNotesContainer = document.getElementById('secureNotesContainer');
+              secureNotesContainer.innerHTML = '';
+
+              // Populate existing secure notes fields dynamically
+              Object.keys(userData).forEach((key) => {
+                if (key.startsWith('secureNotes')) {
+                  const notesNumber = key.replace('secureNotes', '');
+                  const field = key.slice(-1);
+                  const value = userData[key];
+
+                  const notesInfoDiv = document.createElement('div');
+                  notesInfoDiv.classList.add('secure-notes-info');
+                  notesInfoDiv.innerHTML = `
+                                        <div class="form-group">
+                                            <label for="passport${notesNumber}">Passport Number</label>
+                                            <input type="password" id="passport${notesNumber}" name="passport" required value="${value}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="license${notesNumber}">License Number</label>
+                                            <input type="password" id="license${notesNumber}" name="license" required value="${userData['license' + field]}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="ssn${notesNumber}">Social Security Number</label>
+                                            <input type="password" id="ssn${notesNumber}" name="ssn" required value="${userData['expiration' + field]}">
+                                        </div>
+                                    `;
+
+                  secureNotesContainer.appendChild(notesInfoDiv);
                 }
-            } else {
-                // No user is signed in.
-                console.error("User log in error.")
+              });
             }
-        });
+          });
 
-        ////-------------Data Mask and Unmask Segment-------------
+          const editProfileForm = document.querySelector('.edit-profile-form');
 
-        //Subject
-        class Mask {
-            constructor() {
+          editProfileForm.addEventListener('submit', (e) => {
+            e.preventDefault();
 
+            const secureNotesData = {};
+
+            // Collect updated secure notes information from all sets of fields
+            const secureNotesContainers = document.getElementsByClassName('secure-notes-info');
+            for (let i = 0; i < secureNotesContainers.length; i++) {
+              const passportNum = document.getElementById(`passport${i + 1}`).value;
+              const licenseNum = document.getElementById(`license${i + 1}`).value;
+              const ssnNum = document.getElementById(`ssn${i + 1}`).value;
+
+              secureNotesData[`passport${i + 1}`] = passportNum;
+              secureNotesData[`license${i + 1}`] = licenseNum;
+              secureNotesData[`ssn${i + 1}`] = ssnNum;
             }
 
-            revealInformation() {
+            // Update user data in the database
+            update(userRef, secureNotesData)
+              .then(() => {
+                alert('User information updated successfully.');
+              })
+              .catch((error) => {
+                console.error('Error updating user information:', error);
+              });
+          });
+        }
+      } else {
+        console.error("User log in error.")
+      }
+    });
 
-            }
+    ////-------------Data Mask and Unmask Segment-------------
+
+    //Subject
+    class Mask {
+      constructor() {
+
+      }
+
+      revealInformation() {
+
+      }
+    }
+
+    //Real Subject
+    class RealMask extends Mask {
+
+      constructor () {
+        super(); // Invoke the superclass constructor
+        console.log("RealMask Initialized")
+      }
+      revealInformation () {
+        const passportNumField = document.querySelectorAll('[id^="passport"]');
+        const licenseNumField = document.querySelectorAll('[id^="license"]');
+        const socialSecurityField = document.querySelectorAll('[id^="ssn"]');
+        const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
+
+        for (let i = 0; i < passportNumField.length; i++) {
+          passportNumField[i].setAttribute('type', 'text');
+          licenseNumField[i].setAttribute('type', 'text');
+          socialSecurityField[i].setAttribute('type', 'text');
         }
 
-        //Real Subject
-        class RealMask extends Mask {
+        toggleSensitiveInfoButton.textContent = 'Mask Sensitive Information';
+      }
+    }
 
-            constructor () {
-                super(); // Invoke the superclass constructor
-                console.log("RealMask Initialized")
-            }
-            revealInformation () {
-                const passportNumField = document.getElementById('passNum');
-                const licenseNumField = document.getElementById('License');
-                const socialSecurityField = document.getElementById('ssn');
-                const toggleSensitiveInfoButton = document.getElementById('toggleInfo');
+    //Proxy
+    class ProtectionProxy extends Mask {
+      static sensitiveInfo;
+      static realMask;
 
-                passportNumField.setAttribute('type', 'text');
-                licenseNumField.setAttribute('type', 'text');
-                socialSecurityField.setAttribute('type', 'text');
-                toggleSensitiveInfoButton.textContent = 'Mask Sensitive Information';
-            }
+      constructor (isSensitiveInfoVisible) {
+        super(); // Invoke the superclass constructor
+        console.log("ProtectionProxy Initialized")
+        this.sensitiveInfo = isSensitiveInfoVisible;
+        this.realMask = new RealMask();
+      }
+
+      revealInformation () {
+        const passportNumField = document.querySelectorAll('[id^="passport"]');
+        const licenseNumField = document.querySelectorAll('[id^="license"]');
+        const socialSecurityField = document.querySelectorAll('[id^="ssn"]');
+        const toggleSensitiveInfoButton = document.getElementById('toggleSensitiveInfo');
+
+        if (this.sensitiveInfo) {
+          this.realMask.revealInformation();
         }
+        else {
+          for (let i = 0; i < passportNumField.length; i++) {
+            passportNumField[i].setAttribute('type', 'password');
+            licenseNumField[i].setAttribute('type', 'password');
+            socialSecurityField[i].setAttribute('type', 'password');
+          }
 
-        //Proxy
-        class ProtectionProxy extends Mask {
-            static sensitiveInfo;
-            static realMask;
-
-            constructor (isSensitiveInfoVisible) {
-                super(); // Invoke the superclass constructor
-                console.log("ProtectionProxy Initialized")
-                this.sensitiveInfo = isSensitiveInfoVisible;
-                this.realMask = new RealMask();
-            }
-
-            revealInformation () {
-                const passportNumField = document.getElementById('passNum');
-                const licenseNumField = document.getElementById('License');
-                const socialSecurityField = document.getElementById('ssn');
-                const toggleSensitiveInfoButton = document.getElementById('toggleInfo');
-
-                if (this.sensitiveInfo) {
-                    this.realMask.revealInformation();
-                }
-                else {
-                    passportNumField.setAttribute('type', 'password');
-                    licenseNumField.setAttribute('type', 'password');
-                    socialSecurityField.setAttribute('type', 'password');
-                    toggleSensitiveInfoButton.textContent = 'Unmask Sensitive Information';
-                }
-            }
+          toggleSensitiveInfoButton.textContent = 'Unmask Sensitive Information';
         }
+      }
+    }
 
-        const toggleButton = document.getElementById('toggleInfo');
-        let isSensitiveInfoVisible = false;
+    const toggleButton = document.getElementById('toggleSensitiveInfo');
+    let isSensitiveInfoVisible = false;
 
-        toggleButton.addEventListener('click', function() {
-            isSensitiveInfoVisible = !isSensitiveInfoVisible;
-            console.log(isSensitiveInfoVisible.toString());
-            let informationProtector = new ProtectionProxy(isSensitiveInfoVisible);
-            informationProtector.revealInformation();
-        });
+    toggleButton.addEventListener('click', function() {
+      isSensitiveInfoVisible = !isSensitiveInfoVisible;
+      console.log(isSensitiveInfoVisible.toString());
+      let informationProtector = new ProtectionProxy(isSensitiveInfoVisible);
+      informationProtector.revealInformation();
+    });
 
 
-    </script>
-    </div>
+  </script>
+</div>
 
 </body>
 
