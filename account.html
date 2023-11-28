@@ -81,14 +81,14 @@
             newAccountFields.classList.add('account-info');
             newAccountFields.innerHTML = `
              <div class="form-group">
-                <label for="username">Username:</label>
-                 <input type="password" id="username" name="username" required>
+                <label for="username${accountNumber}">Username:</label>
+                 <input type="text" id="username${accountNumber}" name="username" required>
               </div>
                             
 
                  <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+                    <label for="password${accountNumber}">Password:</label>
+                    <input type="password" id="password${accountNumber}" name="password" required>
                 </div>
                 `;
 
@@ -116,23 +116,23 @@
 
                             // Populate existing credit card fields dynamically
                             Object.keys(userData).forEach((key) => {
-                                if (key.startsWith('creditCard')) {
-                                    const cardNumber = key.replace('creditCard', '');
+                                if (key.startsWith('username')) {
+                                    const accountNumber = key.replace('username', '');
                                     const field = key.slice(-1);
                                     const value = userData[key];
 
                                     const AccountDiv = document.createElement('div');
-                                    AccountDiv.classList.add('account-infoo');
+                                    AccountDiv.classList.add('account-info');
                                     AccountDiv.innerHTML = `
                                             <div class="form-group">
-                                                <label for="username">Username:</label>
-                                                <input type="password" id="username" name="username" required>
+                                                <label for="username${accountNumber}">Username:</label>
+                                                <input type="text" id="username${accountNumber}" name="username" required>
                                             </div>
                             
 
                                             <div class="form-group">
-                                                <label for="password">Password:</label>
-                                                <input type="password" id="password" name="password" required>
+                                                <label for="password${accountNumber}">Password:</label>
+                                                <input type="password" id="password${accountNumber}" name="password" required>
                                             </div>
                                         `;
 
