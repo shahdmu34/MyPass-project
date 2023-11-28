@@ -116,7 +116,7 @@
 
                             // Populate existing credit card fields dynamically
                             Object.keys(userData).forEach((key) => {
-                                if (key.startsWith('username')) {
+                                if (key.startsWith('username') && key != 'username') {
                                     const accountNumber = key.replace('username', '');
                                     const field = key.slice(-1);
                                     const value = userData[key];
@@ -126,7 +126,7 @@
                                     AccountDiv.innerHTML = `
                                             <div class="form-group">
                                                 <label for="username${accountNumber}">Username:</label>
-                                                <input type="text" id="username${accountNumber}" name="username" required value="${value}">
+                                                <input type="text" id="username${accountNumber}" name="username" required value="${userData['username' + field]}">
                                             </div>
 
 
@@ -158,7 +158,6 @@
 
                             AccountData[`username${i + 1}`] = username;
                             AccountData[`password${i + 1}`] = password;
-
                         }
 
                         // Update user data in the database
