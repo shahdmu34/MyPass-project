@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<head>
+
+    <meta charset="UTF-8">
+    <title>MyPass</title>
+    <link rel="stylesheet" type="text/css" href="css/home_style.css" />
+</head>
+<body>
+    <div class="container-app">
+        <aside class="sideNav">
+            <h3>MyPass</h3>
+
+            <nav class="menuBar">
+
+                <a href="home.html" class="menu">Edit Profile</a>
+                <a href="account.html" class="menu is-active">Accounts</a>
+                <a href="payment.html" class="menu">Payment Information</a>
+                <a href="identity.html" class="menu">Identity</a>
+                <a href="secure.html" class="menu">Secure Notes</a>
+                <a href="login.html" class="menu">Sign Out</a>
+
+            </nav>
+        </aside>
+
+        <main class="content">
+            <h1>Accounts</h1>
+            <!--username,password, account info edit - center-->
+            <form class="edit-profile-form">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="password" id="username" name="username" required>
+                  </div>
+  
+
+                  <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                  </div>
+
+                
+
+                <div>
+                    <button id="addAccount" type="button">Add New Account</button>
+                    <br>
+                    <br>
+                    <button id="toggleInfo" type="button">Unmask Sensitive Information</button>
+                </div>
+                
+                <br>
+
+                <div>
+                    <button type="submit">Save Information</button>
+                </div>
+            </form>
+        </main>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+        import { getDatabase, set, ref, update, onValue } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAaJ0fhXXd_WEuTwUTQJpa211weqA7ZQ6w",
+            authDomain: "term-project-476.firebaseapp.com",
+            projectId: "term-project-476",
+            storageBucket: "term-project-476.appspot.com",
+            messagingSenderId: "276408407460",
+            appId: "1:276408407460:web:b05ec30e174fb0c3441d31"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        // Initialize user authentication
+        const auth = getAuth(app);
+        // Initialize database
+        const database = getDatabase(app);
+        const submitBtn = document.getElementById('submit');
+   
+    </script>
+    </div>
+
+</body>
+
+</html>
